@@ -11,7 +11,8 @@ import re
 from dataclasses import dataclass
 from urllib.parse import urlparse
 
-from app.agent.tools import DATA_DIR, looks_internal, mask_secrets
+from app.common.paths import DATA_DIR
+from app.common.security import looks_internal, mask_secrets
 from app.core.config import DefenseConfig
 from app.core.prompts import load_prompt
 

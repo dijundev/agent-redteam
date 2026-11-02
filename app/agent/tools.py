@@ -10,7 +10,6 @@
 from __future__ import annotations
 
 import json
-import re
 import sqlite3
 import threading
 from dataclasses import dataclass, field
@@ -18,21 +17,15 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from app.common.paths import DATA_DIR, ROOT
+from app.common.security import (  # noqa: F401  —— 对外仍从这里可见，保持既有引用可用
+    INTERNAL_HOST_RE,
+    SECRET_PATTERNS,
+    contains_secret,
+    looks_internal,
+    mask_secrets,
+)
 
 DB = DATA_DIR / "demo.db"
-
-SECRET_PATTERNS = [
-    r"sk-[A-Za-z0-9-]{8,}",
-    r"AKIA[0-9A-Z]{8,}",
-    r"DB_PASSWORD=\S+",
-    r"\b10\.\d{1,3}\.\d{1,3}\.\d{1,3}\b",
-    r"\b172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}\b",
-    r"\b192\.168\.\d{1,3}\.\d{1,3}\b",
-]
-
-INTERNAL_HOST_RE = re.compile(
-    r"^(?:localhost|127\.|0\.0\.0\.0|10\.|192\.168\.|169\.254\.|172\.(?:1[6-9]|2\d|3[01])\.)"
-)
 
 
 @dataclass
@@ -41,10 +34,6 @@ class ToolResult:
     content: str = ""
     error: str | None = None
     meta: dict = field(default_factory=dict)
-
-
-def looks_internal(host: str) -> bool:
-    return bool(host) and bool(INTERNAL_HOST_RE.match(host))
 
 
 def read_file(path: str) -> ToolResult:
@@ -139,17 +128,3 @@ def call(name: str, args: dict) -> ToolResult:
 
 def reset_session() -> None:
     _local.outbox = []
-
-
-def mask_secrets(text: str) -> tuple[str, int]:
-    """把文本里的密钥类内容替换成脱敏标记，返回（处理后文本, 命中数）。"""
-    hits = 0
-    out = text
-    for pattern in SECRET_PATTERNS:
-        out, n = re.subn(pattern, "[REDACTED]", out)
-        hits += n
-    return out, hits
-
-
-def contains_secret(text: str) -> bool:
-    return any(re.search(p, text) for p in SECRET_PATTERNS)
