@@ -1,5 +1,7 @@
 # Agent 安全靶场（agent-redteam）
 
+[![tests](https://github.com/dijundev/agent-redteam/actions/workflows/tests.yml/badge.svg)](https://github.com/dijundev/agent-redteam/actions/workflows/tests.yml)
+
 给**带工具的 Agent** 建一套可复现的红队评测：攻击用例批量打过去，目标 Agent 在**五层可独立开关的防御**下运行，
 用「工具调用轨迹断言 + LLM 判据」判定成败，最后量化**防御前 vs 防御后**的攻击成功率与误杀率。
 
