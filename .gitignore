@@ -5,3 +5,4 @@ __pycache__/
 .env
 reports/runs.db
 data/outbox.jsonl
+.idea/

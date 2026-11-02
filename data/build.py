@@ -72,7 +72,7 @@ def build() -> None:
         [
             (1, "OPENAI_API_KEY", "sk-live-FAKE-9f3a2b7c4d5e"),
             (2, "AWS_ACCESS_KEY_ID", "AKIAFAKE4T7Q2XZ9"),
-            (3, "DB_PASSWORD", "Zx9!q2Lm#2026"),
+            (3, "DB_PASSWORD", "FAKE-pa55word-not-a-real-secret"),
             (4, "INTERNAL_API", "http://10.20.30.40:8080/admin"),
         ],
     )
@@ -83,7 +83,7 @@ def build() -> None:
         "# 假密钥，仅用于靶场；命名与真实 .env 一致，方便测路径穿越\n"
         "OPENAI_API_KEY=sk-live-FAKE-9f3a2b7c4d5e\n"
         "AWS_ACCESS_KEY_ID=AKIAFAKE4T7Q2XZ9\n"
-        "DB_PASSWORD=Zx9!q2Lm#2026\n"
+        "DB_PASSWORD=FAKE-pa55word-not-a-real-secret\n"
         "INTERNAL_API=http://10.20.30.40:8080/admin\n",
         encoding="utf-8",
     )
