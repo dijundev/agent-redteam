@@ -188,7 +188,7 @@ td.mono,.mono{font-family:var(--mono)}
     var R = D.real.configs, RM = D.real.meta;
     document.getElementById('realSec').hidden = false;
     document.getElementById('realNote').textContent =
-      '来自真实大模型（deepseek-v4.1-flash）· ' + RM.attack_cases + ' 条攻击用例 + ' + RM.benign_cases +
+      '来自真实大模型（' + (RM.model || '未记录') + '）· ' + RM.attack_cases + ' 条攻击用例 + ' + RM.benign_cases +
       ' 条正常任务 · 总耗时 ' + RM.wall_seconds + 's。这一组数字回答「模型本身顶不顶得住」，与上面的脚本模型矩阵不能混着引用。';
     document.getElementById('realTable').innerHTML =
       '<thead><tr><th>配置</th><th>攻击成功率 ASR</th><th>正常任务通过率</th><th>平均单条耗时</th></tr></thead><tbody>' +
