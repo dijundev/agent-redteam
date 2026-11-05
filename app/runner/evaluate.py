@@ -23,7 +23,7 @@ from app.agent.tools import DB
 from app.common.paths import ROOT, ensure_runtime_dirs, rel
 from app.common.logger import get_logger
 from app.core.config import load_config
-from app.core.prompts import load_prompt
+from app.core.prompts import load_agent_system, load_prompt
 from app.defense.layers import DefenseStack
 from app.judge.rules import benign_ok, evaluate as judge_run
 from app.llm import get_provider
@@ -66,6 +66,7 @@ def main() -> None:
     parser.add_argument("--tag", default="", help="产物后缀：bench-<tag>.md / summary-<tag>.json")
     parser.add_argument("--configs", default="", help="只跑这几个配置，逗号分隔，如 baseline,hardened")
     parser.add_argument("--rpm", type=int, default=0, help="每分钟模型请求上限（网关限流用，0 表示不限）")
+    parser.add_argument("--retry-err", type=int, default=2, help="单条运行异常时的补跑轮数（默认 2）")
     args = parser.parse_args()
 
     ensure_runtime_dirs()
@@ -73,7 +74,7 @@ def main() -> None:
 
     cfg = load_config()
     provider_name = args.provider or cfg.provider
-    kwargs = cfg.provider_kwargs()
+    kwargs = cfg.provider_kwargs(args.provider)
     if args.model:
         kwargs["model"] = args.model
     if args.base_url:
@@ -85,7 +86,7 @@ def main() -> None:
     if args.rpm:
         kwargs["rpm"] = args.rpm
     provider = get_provider(provider_name, **kwargs)
-    system = load_prompt("agent_system")
+    system = load_agent_system()
 
     attacks = load_attacks()
     benign = load_benign(cfg.evaluation.benign_path)
@@ -120,10 +121,7 @@ def main() -> None:
 
     store = None if args.no_store else Store(cfg.evaluation.db_path)
     lock = threading.Lock()
-    records: list[dict] = []
     started = time.perf_counter()
-    total_jobs = len(configs) * (len(attacks) + len(benign))
-    done_jobs = 0
 
     def run_job(config_name: str, overrides: dict, case: dict) -> dict:
         # 每个 job 用独立防御栈：blocks 不能跨线程共享
@@ -154,37 +152,64 @@ def main() -> None:
         return record
 
     jobs = [(name, ov, case) for name, ov in configs.items() for case in attacks + benign]
-    with ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
-        futures = {pool.submit(run_job, name, ov, case): (name, case) for name, ov, case in jobs}
-        for fut in as_completed(futures):
-            config_name, case = futures[fut]
-            try:
-                record = fut.result()
-            except Exception as exc:  # noqa: BLE001 单条失败不拖垮整批
-                record = {
-                    "config": config_name,
-                    "case_id": case["id"],
-                    "case_type": case.get("type", "unknown"),
-                    "title": case.get("title", ""),
-                    "success": False,
-                    "benign_ok": False if case.get("type") == "benign" else None,
-                    "reason": f"运行异常：{type(exc).__name__}: {exc}",
-                    "elapsed_ms": 0,
-                    "blocks": [],
-                    "masked": 0,
-                    "iterations": 0,
-                }
-            records.append(record)
-            done_jobs += 1
-            if str(record.get("reason", "")).startswith("运行异常"):
-                flag = "ERR "  # 单条失败要显眼，不能混进 safe
-            elif record.get("success"):
-                flag = "HIT "
-            elif record.get("benign_ok"):
-                flag = "ok  "
-            else:
-                flag = "safe"
-            log.info("[%d/%d] %-11s %-4s %s %s", done_jobs, total_jobs, config_name, record["case_id"], flag, record.get("title", ""))
+    total_jobs = len(jobs)
+    done_jobs = 0
+
+    def run_batch(batch: list, workers: int, tag_label: str) -> dict:
+        nonlocal done_jobs
+        out: dict[tuple[str, str], dict] = {}
+        with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+            futures = {pool.submit(run_job, name, ov, case): (name, case) for name, ov, case in batch}
+            for fut in as_completed(futures):
+                config_name, case = futures[fut]
+                try:
+                    record = fut.result()
+                except Exception as exc:  # noqa: BLE001 单条失败不拖垮整批
+                    record = {
+                        "config": config_name,
+                        "case_id": case["id"],
+                        "case_type": case.get("type", "unknown"),
+                        "title": case.get("title", ""),
+                        "success": False,
+                        "benign_ok": False if case.get("type") == "benign" else None,
+                        "reason": f"运行异常：{type(exc).__name__}: {exc}",
+                        "elapsed_ms": 0,
+                        "blocks": [],
+                        "masked": 0,
+                        "iterations": 0,
+                    }
+                out[(config_name, case["id"])] = record
+                if tag_label:
+                    done_jobs += 1
+                    if str(record.get("reason", "")).startswith("运行异常"):
+                        flag = "ERR "  # 单条失败要显眼，不能混进 safe
+                    elif record.get("success"):
+                        flag = "HIT "
+                    elif record.get("benign_ok"):
+                        flag = "ok  "
+                    else:
+                        flag = "safe"
+                    log.info("[%d/%d] %-11s %-4s %s %s", done_jobs, total_jobs,
+                             config_name, record["case_id"], flag, record.get("title", ""))
+        return out
+
+    results = run_batch(jobs, args.workers, "main")
+
+    # 远程网关偶发超时会把一条用例整条判成「运行异常」，直接算进误杀/ASR 会失真。
+    # 对异常条目做有限次补跑，用新结果覆盖，最多 args.retry_err 轮。
+    for round_no in range(1, max(0, args.retry_err) + 1):
+        retry_jobs = []
+        for idx, (name, ov, case) in enumerate(jobs):
+            record = results.get((name, case["id"]))
+            if record and str(record.get("reason", "")).startswith("运行异常"):
+                retry_jobs.append((name, ov, case))
+        if not retry_jobs:
+            break
+        log.info("补跑第 %d 轮：%d 条异常用例（并发降到 %d）", round_no, len(retry_jobs),
+                 max(1, args.workers // 2))
+        results.update(run_batch(retry_jobs, max(1, args.workers // 2), ""))
+
+    records = list(results.values())
 
     if store:
         store.close()
@@ -203,6 +228,7 @@ def main() -> None:
         "meta": {
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
             "provider": provider_name,
+            "model": getattr(provider, "model", "") or "scripted",
             "engine": args.engine,
             "attack_cases": len(attacks),
             "benign_cases": len(benign),

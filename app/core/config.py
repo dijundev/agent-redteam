@@ -57,14 +57,21 @@ class AppConfig:
     evaluation: EvalConfig
     api_key: str = ""
 
-    def provider_kwargs(self) -> dict:
-        if self.provider == "ollama":
+    def provider_kwargs(self, provider: str | None = None) -> dict:
+        """按 provider 名构造工厂参数。
+
+        `provider` 显式传入时以它为准——命令行 `--provider deepseek` 不能只看
+        conf/agent.yaml 里的默认值（那里通常是 scripted），否则会拿到空字典，
+        provider 退化成 dataclass 默认的 deepseek-chat + 官方 base_url，请求直接 401。
+        """
+        name = (provider or self.provider or "scripted").lower()
+        if name == "ollama":
             return {
                 "model": self.ollama.get("model", "qwen2.5:7b"),
                 "host": self.ollama.get("host", "http://127.0.0.1:11434"),
                 "timeout": int(self.ollama.get("timeout", 120)),
             }
-        if self.provider in ("deepseek", "openai", "openai-compat"):
+        if name in ("deepseek", "openai", "openai-compat"):
             return {
                 "model": self.deepseek.get("model", "deepseek-chat"),
                 "base_url": self.deepseek.get("base_url", "https://api.deepseek.com/v1"),

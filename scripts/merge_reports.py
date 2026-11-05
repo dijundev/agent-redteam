@@ -50,14 +50,18 @@ def render(payload: dict) -> str:
     meta = payload["meta"]
     s = payload["configs"]
     real = payload.get("real")
+    # 头部时间取最新一次运行（真实模型跑得更晚），模型名从 meta 里读，不写死
+    head_time = (real or {}).get("meta", {}).get("generated_at") or meta["generated_at"]
+    real_model = (real or {}).get("meta", {}).get("model") or ""
+    real_label = f"真实大模型（`{real_model}`）" if real_model else "真实大模型"
     lines = [
         "# 评测基线（bench.md）",
         "",
-        f"> 由 `python -m app.runner.evaluate` + `scripts/merge_reports.py` 生成，**禁止手填**。生成时间：{meta['generated_at']}",
+        f"> 由 `python -m app.runner.evaluate` + `scripts/merge_reports.py` 生成，**禁止手填**。生成时间：{head_time}",
         "",
         "本报告分两部分：",
         "",
-        "- **一、真实模型对照**：真实大模型（DeepSeek-v4.1-flash）在防御全关/全开两种配置下的全量结果，回答「模型本身顶不顶得住」。",
+        f"- **一、真实模型对照**：{real_label}在防御全关/全开两种配置下的全量结果，回答「模型本身顶不顶得住」。",
         "- **二、脚本模型矩阵**：确定性的脚本模型跑完 7 种防御配置，用于验证评测链路与**每一层防御的贡献**（逐层边际）。",
         "",
         "脚本模型不是真模型，它把 7B 级模型的常见失效方式写成规则；两部分数字不能混着引用。",
@@ -69,7 +73,7 @@ def render(payload: dict) -> str:
         lines += [
             "## 一、真实模型对照",
             "",
-            f"- 模型：`deepseek-v4.1-flash`（provider=`{rmeta['provider']}`）",
+            f"- 模型：`{rmeta.get('model') or '未知'}`（provider=`{rmeta['provider']}`）",
             f"- 用例：攻击 {rmeta['attack_cases']} 条 + 正常任务 {rmeta['benign_cases']} 条，配置：{', '.join(rc.keys())}",
             f"- 总耗时：{rmeta['wall_seconds']}s",
             "",

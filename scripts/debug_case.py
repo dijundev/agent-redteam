@@ -5,7 +5,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.agent.engine import run_case
 from app.core.config import load_config
-from app.core.prompts import load_prompt
+from app.core.prompts import load_agent_system, load_prompt
 from app.defense.layers import DefenseStack
 from app.judge.rules import evaluate
 from app.llm import get_provider
@@ -13,7 +13,7 @@ from app.runner.cases import load_attacks
 
 cfg = load_config()
 provider = get_provider("scripted")
-system = load_prompt("agent_system")
+system = load_agent_system()
 stack = DefenseStack(cfg.defense, {k: False for k in ["isolation", "allowlist", "params", "gate", "filter"]})
 
 cases = {c["id"]: c for c in load_attacks()}

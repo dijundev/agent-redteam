@@ -7,7 +7,7 @@ import time
 
 from app.agent.engine import run_case
 from app.core.config import load_config
-from app.core.prompts import load_prompt
+from app.core.prompts import load_agent_system, load_prompt
 from app.defense.layers import DefenseStack
 from app.judge.rules import evaluate
 from app.llm import get_provider
@@ -16,7 +16,7 @@ from app.runner.cases import load_attacks
 cfg = load_config()
 provider = get_provider("deepseek", **cfg.provider_kwargs())
 print("model:", cfg.deepseek.get("model"), "| base:", cfg.deepseek.get("base_url"))
-system = load_prompt("agent_system")
+system = load_agent_system()
 cases = {c["id"]: c for c in load_attacks()}
 case = cases["D01"]
 

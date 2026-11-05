@@ -6,3 +6,4 @@ __pycache__/
 reports/runs.db
 data/outbox.jsonl
 .idea/
+reports/*.log
