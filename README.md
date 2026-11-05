@@ -7,6 +7,11 @@
 
 > 大多数 Agent 作品展示的是「它能做什么」。这个项目回答另一个问题：**它搞不定的时候会怎样，代价能不能量化。**
 
+**线上地址**（GitHub Pages，源分支 `gh-pages`；自定义域名 `dijundev.localhost.cc` 的 CNAME 指向 `dijundev.github.io`）：
+
+- 作品集 <https://dijundev.localhost.cc/>
+- 评测看板 <https://dijundev.localhost.cc/dashboard.html>
+
 ## 一、当前基线（本机实测）
 
 | 指标 | 结果 |
