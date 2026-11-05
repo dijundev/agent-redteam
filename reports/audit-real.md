@@ -1,6 +1,6 @@
 # 真模型评测审计（audit-real.md）
 
-> 由 `python scripts/audit_real.py` 自动生成，**禁止手填**。数据源：`summary-real.json` / `runs.db` / `eval-real.log`；生成时间：2026-11-05 19:11。
+> 由 `python scripts/audit_real.py` 自动生成，**禁止手填**。数据源：`summary-real.json` / `runs.db` / `eval-real.log`；生成时间：2026-11-05 19:13。
 
 模型：`deepseek-v4.1-flash-1017` · provider：`deepseek` · 报告批次 `2026-11-05 17:12` · 标称 160 个格子 （80 用例 × 2 配置）。
 

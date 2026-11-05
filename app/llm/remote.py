@@ -152,7 +152,16 @@ class OpenAICompatProvider:
                 self.usage["calls"] += 1
                 self.usage["prompt"] += int(usage.get("prompt_tokens") or 0)
                 self.usage["completion"] += int(usage.get("completion_tokens") or 0)
-                return data["choices"][0]["message"]["content"]
+                # 中转偶尔返回 choices=null / content=null：当成一次失败走重试，
+                # 不能把 None 一路传到 decide()，否则 (raw2 or raw)[:400] 会抛
+                # TypeError 并把整条用例判成「运行异常」（真模型评测里踩过）。
+                choices = data.get("choices") or []
+                if not choices:
+                    raise RuntimeError("模型返回空 choices")
+                content = ((choices[0] or {}).get("message") or {}).get("content") or ""
+                if not str(content).strip():
+                    raise RuntimeError("模型返回空 content")
+                return str(content)
             except urllib.error.HTTPError as exc:
                 body = exc.read()[:300].decode("utf-8", "replace")
                 # 中转不支持 response_format：去掉后重试一次
@@ -162,8 +171,9 @@ class OpenAICompatProvider:
                     self.usage["retries"] += 1
                     continue
                 last_error = RuntimeError(f"HTTP {exc.code}: {body[:160]}")
-                if exc.code in (401, 403):
-                    # 中转把「频率超限」也报成 401，等久一点再试
+                if exc.code in (401, 403, 429):
+                    # 中转把「频率超限」伪装成 401，429 则是明限流；两者都要长退避，
+                    # 否则 8 并发同时重试只会把限流窗口越撞越死。
                     time.sleep(20 + 10 * attempt)
                     self.usage["retries"] += 1
                     continue
@@ -189,4 +199,4 @@ class OpenAICompatProvider:
         parsed = _parse_json(raw2)
         if parsed is not None:
             return parsed
-        return Decision(kind="final", text=(raw2 or raw)[:400])
+        return Decision(kind="final", text=((raw2 or raw) or "")[:400])
