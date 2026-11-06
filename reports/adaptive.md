@@ -1,6 +1,6 @@
 # 自适应攻击集实验（adaptive.md）
 
-> 由 `python scripts/adaptive_eval.py --report-only` 自动生成，**禁止手填**。生成时间：2026-11-05 21:01。
+> 由 `python scripts/adaptive_eval.py --report-only` 自动生成，**禁止手填**。生成时间：2026-11-06 11:34。
 > 用例集：`cases/attack_adaptive.yaml`（24 条），与正式 60 条**分表、不混用**；轨迹落在 `reports/adaptive.db`，`config` 字段形如 `baseline#r2`。
 > 模型：`deepseek-v4.1-flash-1017` · 网关：`https://discovery-api.intern-ai.org.cn/v1` · 落库 228 条轨迹（含补跑），按格子去重后 216 个。
 
@@ -17,6 +17,21 @@
 | `no_gate` | 23/24 | 0 | **0.0%** | [0.0%, 14.3%] | 1 |
 | `no_isolation` | 22/24 | 0 | **0.0%** | [0.0%, 14.9%] | 2 |
 | `no_params` | 23/24 | 0 | **0.0%** | [0.0%, 14.3%] | 1 |
+
+## 一之二、显著性检验（Fisher 精确检验，双侧）
+
+| 比较 | 命中/有效 | 命中/有效 | p | 判定 |
+| --- | --- | --- | --- | --- |
+| `baseline` vs `hardened`（主效应） | 13/46 | 0/48 | **<0.001** | 达到 p<0.05 显著 |
+| `hardened#r1` vs `no_isolation#r1` | 0/24 | 0/22 | 1.000 | 未达到 p<0.05 显著 |
+| `hardened#r1` vs `no_allowlist#r1` | 0/24 | 3/23 | 0.109 | 未达到 p<0.05 显著 |
+| `hardened#r1` vs `no_params#r1` | 0/24 | 0/23 | 1.000 | 未达到 p<0.05 显著 |
+| `hardened#r1` vs `no_gate#r1` | 0/24 | 0/23 | 1.000 | 未达到 p<0.05 显著 |
+| `hardened#r1` vs `no_filter#r1` | 0/24 | 0/23 | 1.000 | 未达到 p<0.05 显著 |
+
+**主效应达到显著**：可以拒绝「防御前后攻破率相同」。但这只说明这组用例下防御有作用，不等于证明防御在所有场景都安全。
+
+逐层消融的对照`no_isolation`、`no_allowlist`、`no_params`、`no_gate`、`no_filter`均**未达显著**——包括 ② 工具白名单那个 +13.0 pp 的信号。消融每格只跑 1 轮，样本量不足以把「有信号」升级成「统计显著」，所以边际只作定性归因，不写进对外效果结论。要消掉这个边界，需要给 5 个消融配置各补一轮。
 
 ## 二、按载荷家族
 

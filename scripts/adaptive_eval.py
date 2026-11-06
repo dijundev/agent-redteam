@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import sys
 import threading
 import time
@@ -41,6 +40,7 @@ from app.judge.rules import evaluate as judge_run  # noqa: E402
 from app.llm import get_provider  # noqa: E402
 from app.runner.cases import load_tasks  # noqa: E402
 from app.runner.metrics import LAYERS  # noqa: E402
+from app.runner.stats import fisher_exact, fmt_p, verdict_at, wilson  # noqa: E402
 from app.runner.store import Store  # noqa: E402
 
 LAYER_NAMES = {
@@ -57,16 +57,6 @@ FAMILY_NAMES = {
     "multistep": "F4 多轮渐进",
 }
 ERR_PREFIX = "[ERR] "
-
-
-def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
-    if n == 0:
-        return (0.0, 0.0)
-    p = k / n
-    d = 1 + z * z / n
-    centre = (p + z * z / (2 * n)) / d
-    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
-    return (max(0.0, (centre - half) * 100), min(100.0, (centre + half) * 100))
 
 
 def load_cases(path: Path) -> list[dict]:
@@ -266,7 +256,6 @@ def do_report(cfg, cases: list[dict]) -> None:
         "stability": stability, "titles": title, "families": FAMILY_NAMES,
     }
     out_json = cfg.evaluation.reports_dir / "adaptive-summary.json"
-    out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     lines = [
         "# 自适应攻击集实验（adaptive.md）",
@@ -293,6 +282,45 @@ def do_report(cfg, cases: list[dict]) -> None:
         s = summary[name]
         lines.append(f"| `{name}` | {s['valid']}/{s['total']} | {s['success']} | "
                      f"**{s['asr']}%** | [{s['ci'][0]}%, {s['ci'][1]}%] | {s['invalid']} |")
+
+    # 显著性检验：区间重叠只是直觉，Fisher 给出可引用的 p 值。
+    # 消融对照用 hardened#r1（同为 24 格 × 1 轮），避免拿两轮合并的样本混比。
+    main_p = None
+    if "baseline" in summary and "hardened" in summary:
+        b, h = summary["baseline"], summary["hardened"]
+        main_p = fisher_exact(b["success"], b["valid"], h["success"], h["valid"])
+    h1 = stat("hardened", "hardened#r1") if "hardened" in summary else None
+    significance = {"main": main_p}
+    lines += ["", "## 一之二、显著性检验（Fisher 精确检验，双侧）", "",
+              "| 比较 | 命中/有效 | 命中/有效 | p | 判定 |", "| --- | --- | --- | --- | --- |"]
+    if main_p is not None:
+        b, h = summary["baseline"], summary["hardened"]
+        lines.append(f"| `baseline` vs `hardened`（主效应） | {b['success']}/{b['valid']} | "
+                     f"{h['success']}/{h['valid']} | **{fmt_p(main_p)}** | {verdict_at(main_p)} |")
+    if h1:
+        for layer in LAYERS:
+            key = f"no_{layer}"
+            if key not in summary:
+                continue
+            one = stat(key, f"{key}#r1")
+            p = fisher_exact(one["success"], one["valid"], h1["success"], h1["valid"])
+            significance[key] = p
+            lines.append(f"| `hardened#r1` vs `{key}#r1` | {h1['success']}/{h1['valid']} | "
+                         f"{one['success']}/{one['valid']} | {fmt_p(p)} | {verdict_at(p)} |")
+    lines.append("")
+    if main_p is not None and main_p < 0.05:
+        lines.append("**主效应达到显著**：可以拒绝「防御前后攻破率相同」。"
+                     "但这只说明这组用例下防御有作用，不等于证明防御在所有场景都安全。")
+    insig = [k for k, p in significance.items() if k != "main" and p is not None and p >= 0.05]
+    if insig:
+        lines.append("")
+        lines.append("逐层消融的对照" + "、".join(f"`{k}`" for k in insig) + "均**未达显著**——"
+                     "包括 ② 工具白名单那个 +13.0 pp 的信号。消融每格只跑 1 轮，"
+                     "样本量不足以把「有信号」升级成「统计显著」，所以边际只作定性归因，"
+                     "不写进对外效果结论。要消掉这个边界，需要给 5 个消融配置各补一轮。")
+    payload["significance"] = {k: (None if v is None else round(v, 6))
+                               for k, v in significance.items()}
+
     lines += ["", "## 二、按载荷家族", "", "| 家族 | " + " | ".join(f"`{n}`" for n in order) + " |",
               "| --- | " + " | ".join("---" for _ in order) + " |"]
     for f, fname in FAMILY_NAMES.items():
@@ -352,6 +380,8 @@ def do_report(cfg, cases: list[dict]) -> None:
               "python scripts/adaptive_eval.py --report-only", "```", ""]
     out_md = cfg.evaluation.reports_dir / "adaptive.md"
     out_md.write_text("\n".join(lines), encoding="utf-8")
+    # 显著性检验在报告渲染时算出来，JSON 必须最后写，否则会漏字段。
+    out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"报告：{out_md}")
     for name in order:
         s = summary[name]

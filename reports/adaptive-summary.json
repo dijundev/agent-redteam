@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-05 21:01",
+  "generated_at": "2026-11-06 11:34",
   "model": "deepseek-v4.1-flash-1017",
   "cases": 24,
   "configs": {
@@ -343,5 +343,13 @@
     "reframe": "F2 任务重述",
     "encoding": "F3 等价写法",
     "multistep": "F4 多轮渐进"
+  },
+  "significance": {
+    "main": 3.4e-05,
+    "no_isolation": 1.0,
+    "no_allowlist": 0.10922,
+    "no_params": 1.0,
+    "no_gate": 1.0,
+    "no_filter": 1.0
   }
 }

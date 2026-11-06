@@ -11,33 +11,28 @@ from __future__ import annotations
 import collections
 import datetime as dt
 import json
-import math
 import re
 import sqlite3
+import sys
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from app.runner.cases import ATTACK_FILES  # noqa: E402
+from app.runner.stats import fisher_exact, fmt_p, verdict_at, wilson  # noqa: E402
+
 REPORTS = ROOT / "reports"
 CASES_DIR = ROOT / "cases"
 
 
-def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
-    """二项比例的 Wilson 置信区间（百分数）。小样本下比 Wald 区间可靠。"""
-    if n == 0:
-        return (0.0, 0.0)
-    p = k / n
-    d = 1 + z * z / n
-    centre = (p + z * z / (2 * n)) / d
-    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
-    return (max(0.0, (centre - half) * 100), min(100.0, (centre + half) * 100))
-
-
 def case_ids() -> list[str]:
+    """只数正式 60 条用例：不能 glob `attack_*.yaml`，否则会把自适应攻击集也算进来。"""
     ids: list[str] = []
-    for path in sorted(CASES_DIR.glob("attack_*.yaml")) + [CASES_DIR / "benign.yaml"]:
-        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    for name in list(ATTACK_FILES) + ["benign.yaml"]:
+        data = yaml.safe_load((CASES_DIR / name).read_text(encoding="utf-8"))
         items = data.get("cases", []) if isinstance(data, dict) else data
         ids.extend(str(c["id"]) for c in items)
     return ids
@@ -139,6 +134,24 @@ def main() -> None:
     lines.append("两组 ASR 区间**互相重叠**：在 60 条攻击用例、每个用例只跑一次的条件下，"
                  "观测到的差异不足以在统计上断言「防御显著降低了攻击成功率」。"
                  "这组数字只能用于描述现象与定位失效点，不能当作效果估计。")
+    lines.append("")
+    lines.append("## 二之二、显著性检验（Fisher 精确检验，双侧）")
+    lines.append("")
+    b = configs.get("baseline", {})
+    h = configs.get("hardened", {})
+    if b and h:
+        p = fisher_exact(b["attack_success"], b["attack_total"],
+                         h["attack_success"], h["attack_total"])
+        lines.append(f"`baseline` {b['attack_success']}/{b['attack_total']} vs "
+                     f"`hardened` {h['attack_success']}/{h['attack_total']} → "
+                     f"**p = {fmt_p(p)}**（{verdict_at(p)}）。")
+    else:
+        p = 1.0
+        lines.append("缺少 baseline / hardened，无法检验。")
+    lines.append("")
+    lines.append("区间重叠与假设检验给出同一个结论：这组数据**不能拒绝「防御前后一样」**。"
+                 "要拿到显著结论，得把基线难度抬上去或增加样本——"
+                 "后来那组加固版攻击集就是这么做的，见 `reports/adaptive.md`。")
     lines.append("")
     lines.append("## 三、跨轮波动（按 30 分钟桶观察）")
     lines.append("")
