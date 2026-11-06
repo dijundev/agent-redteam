@@ -209,7 +209,7 @@ footer span{margin-left:auto}
   .contact h2,.contact p,.contact .lk,footer,footer .wrap{color:#15181d;background:#fff;border-color:#d8dde5}
   a{border:0;color:#15181d}
   /* 站内交互在纸面上没有意义，导出 PDF 时去掉 */
-  .contact .links a[onclick], .contact .links a[href="#projects"]{display:none!important}
+  .contact .links a[onclick], .contact .links a[href="#projects"], .contact .links a[download]{display:none!important}
   .codes .note{color:#5c6577}
   section.band{break-inside:auto}
 }
@@ -226,6 +226,7 @@ footer span{margin-left:auto}
       <a href="#cap">技能</a>
       <a href="#tl">经历</a>
       <a href="mailto:liudijunfo@foxmail.com" data-copy="liudijunfo@foxmail.com">邮箱</a>
+      <a class="print" href="dijundev-portfolio.pdf" download>下载 PDF</a>
       <button class="print" onclick="window.print()">打印 / 存 PDF</button>
     </nav>
   </div>
@@ -726,6 +727,7 @@ footer span{margin-left:auto}
       <a class="lk" href="#" data-live="gitee">国内镜像 <b>Gitee</b></a>
       <a class="lk" href="#" data-live="dashboard">靶场看板 <b>在线评测结果</b></a>
       <a class="lk" href="#projects">项目详情 <b>01 – 03</b></a>
+      <a class="lk" href="dijundev-portfolio.pdf" download>作品集 PDF <b>直接下载（9 页）</b></a>
       <a class="lk" href="#" onclick="window.print();return false;">简历版 <b>打印 / 存 PDF</b></a>
     </div>
   </div>
