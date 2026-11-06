@@ -2,8 +2,9 @@
 
 与正式评测（app.runner.evaluate）刻意分开：
 - 正式 60 条用例的结果与口径不动，实验集单独成文件 `cases/attack_adaptive.yaml`；
-- 每次运行落 `reports/adaptive.db`（复用 Store 的表结构），已完成格子自动跳过，
-  因此可以分多次调用、每次只跑 --max-jobs 条，绕开长任务被回收的问题；
+- 每次运行落 `reports/<--db>`（默认 adaptive.db，复用 Store 的表结构），
+  不同实验用 `--db` / `--tag` 隔开；已完成格子自动跳过，因此可以分多次调用、
+  每次只跑 --max-jobs 条，绕开长任务被回收的问题；
 - config 字段写成 `<配置>#r<重复序号>`，用它同时承载配置名与重复编号。
 
 用法：
@@ -89,13 +90,21 @@ def overrides_for(name: str) -> dict[str, bool]:
 
 
 def completed_keys(store: Store) -> set[tuple[str, str]]:
-    """只重跑「调用本身抛异常」的格子。
+    """只重跑「调用本身抛异常」的格子，且最多重试 3 次。
 
     回答为空是模型到达步数上限没给结论，属于稳定的观测结果（记为无效样本），
-    重复跑只会反复浪费同一笔调用，所以也算已完成。
+    重复跑只会浪费调用；同一个格子连续 3 次抛异常说明网关对这条持续不兼容，
+    也停止重试，留在库里当无效样本如实上报——否则续跑会无限撞同一个错误。
     """
-    rows = store.con.execute("select config, case_id, answer from runs").fetchall()
-    return {(cfg, cid) for cfg, cid, ans in rows if not (ans or "").startswith(ERR_PREFIX)}
+    rows = store.con.execute("select config, case_id, answer from runs order by rowid").fetchall()
+    latest: dict[tuple[str, str], str] = {}
+    counts: dict[tuple[str, str], int] = {}
+    for cfg, cid, ans in rows:
+        key = (cfg, cid)
+        latest[key] = ans or ""
+        counts[key] = counts.get(key, 0) + 1
+    return {key for key, ans in latest.items()
+            if not ans.startswith(ERR_PREFIX) or counts[key] >= 3}
 
 
 def run_one(case: dict, cfg_name: str, rep: int, cfg, provider, system, store, lock) -> tuple[str, str, bool, str]:
@@ -111,7 +120,7 @@ def run_one(case: dict, cfg_name: str, rep: int, cfg, provider, system, store, l
         success, reason = False, f"运行异常：{type(exc).__name__}: {exc}"
         answer = ERR_PREFIX + reason
         run = SimpleNamespace(
-            provider="deepseek", config_name=label, case_id=case["id"],
+            provider=getattr(provider, "name", "unknown"), config_name=label, case_id=case["id"],
             case_type=case.get("type", "unknown"), title=case.get("title", ""),
             masked=0, elapsed_ms=0, iterations=0, blocks=[], steps=[], answer=answer, outbox=[],
         )
@@ -176,8 +185,9 @@ def do_run(args, cfg, provider, cases: list[dict], store: Store) -> None:
     print(f"本批完成 {len(jobs)} 条，命中 {hits}，耗时 {time.perf_counter() - started:.0f}s", flush=True)
 
 
-def do_report(cfg, cases: list[dict]) -> None:
-    store = Store(cfg.evaluation.db_path.with_name("adaptive.db"))
+def do_report(cfg, cases: list[dict], db_path: Path, tag: str = "",
+              cases_rel: str = "cases/attack_adaptive.yaml", model: str = "") -> None:
+    store = Store(db_path)
     rows = store.con.execute(
         "select rowid, config, case_id, success, answer, blocks, elapsed_ms from runs order by rowid"
     ).fetchall()
@@ -193,6 +203,11 @@ def do_report(cfg, cases: list[dict]) -> None:
 
     family = {c["id"]: c.get("family", "other") for c in cases}
     title = {c["id"]: c.get("title", "") for c in cases}
+    # 家族名按本次用例集动态补全：v2 的 encoding2/attachment、
+    # 多模态组的 multimodal 都不是默认值，写死会让报告漏掉整行。
+    family_names = dict(FAMILY_NAMES)
+    for f in sorted({v for v in family.values() if v}):
+        family_names.setdefault(f, f)
     by_cfg: dict[str, list] = {}
     for _rowid, config, cid, success, answer, blocks, elapsed in rows:
         base = config.split("#")[0]
@@ -209,7 +224,7 @@ def do_report(cfg, cases: list[dict]) -> None:
         k = sum(1 for r in valid if r["success"])
         lo, hi = wilson(k, len(valid))
         per_family = {}
-        for f in FAMILY_NAMES:
+        for f in family_names:
             sub = [r for r in valid if family.get(r["case_id"]) == f]
             per_family[f] = {"total": len(sub), "success": sum(1 for r in sub if r["success"])}
         return {
@@ -220,20 +235,25 @@ def do_report(cfg, cases: list[dict]) -> None:
         }
 
     summary = {name: stat(name) for name in by_cfg}
-    # 边际必须拿同样的采样口径比：消融都是 24 格 × 1 轮，
-    # 所以对照用 hardened#r1，而不是两轮合并的 hardened（48 格）。
+    # 边际必须拿同样的采样口径比。补了第 2 轮之后，如果 hardened 与各消融
+    # 都已有 >24 个有效格子，就用合并样本（同为 2 轮）对照，统计功效更高；
+    # 否则退回只比 #r1（同为 1 轮），绝不拿 48 格与 24 格混比。
+    ablated = [f"no_{k}" for k in LAYERS if f"no_{k}" in summary]
+    pooled = (bool(ablated) and "hardened" in summary
+              and summary["hardened"]["valid"] > 24
+              and all(summary[k]["valid"] > 24 for k in ablated))
     marginal = []
-    if "hardened#r1" in {r["label"] for recs in by_cfg.values() for r in recs}:
-        h1 = stat("hardened", "hardened#r1")
+    if "hardened" in summary:
+        h_stat = stat("hardened") if pooled else stat("hardened", "hardened#r1")
         for layer in LAYERS:
             key = f"no_{layer}"
             if key in summary:
-                one = stat(key, f"{key}#r1")
+                one = stat(key) if pooled else stat(key, f"{key}#r1")
                 marginal.append({
                     "layer": layer, "name": LAYER_NAMES[layer],
-                    "asr_with": h1["asr"], "asr_without": one["asr"],
-                    "delta": round(one["asr"] - h1["asr"], 1),
-                    "n_with": h1["valid"], "n_without": one["valid"],
+                    "asr_with": h_stat["asr"], "asr_without": one["asr"],
+                    "delta": round(one["asr"] - h_stat["asr"], 1),
+                    "n_with": h_stat["valid"], "n_without": one["valid"],
                 })
 
     # 重复采样稳定性：每个用例在不同重复轮次里是否出现「有的中、有的不中」
@@ -249,21 +269,23 @@ def do_report(cfg, cases: list[dict]) -> None:
             "mixed_cases": sorted(mixed), "cases": len(per_case),
         }
 
+    suffix = f"-{tag}" if tag else ""
     payload = {
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "model": cfg.deepseek.get("model", ""),
-        "cases": len(cases), "configs": summary, "marginal": marginal,
-        "stability": stability, "titles": title, "families": FAMILY_NAMES,
+        "model": model or cfg.deepseek.get("model", ""),
+        "cases": len(cases), "cases_file": cases_rel, "tag": tag,
+        "configs": summary, "marginal": marginal, "pooled_marginal": pooled,
+        "stability": stability, "titles": title, "families": family_names,
     }
-    out_json = cfg.evaluation.reports_dir / "adaptive-summary.json"
+    out_json = cfg.evaluation.reports_dir / f"adaptive-summary{suffix}.json"
 
     lines = [
-        "# 自适应攻击集实验（adaptive.md）",
+        f"# 自适应攻击集实验（adaptive{suffix}.md）",
         "",
         f"> 由 `python scripts/adaptive_eval.py --report-only` 自动生成，**禁止手填**。"
         f"生成时间：{payload['generated_at']}。",
-        f"> 用例集：`cases/attack_adaptive.yaml`（{len(cases)} 条），与正式 60 条**分表、不混用**；"
-        "轨迹落在 `reports/adaptive.db`，`config` 字段形如 `baseline#r2`。",
+        f"> 用例集：`{cases_rel}`（{len(cases)} 条），与正式 60 条**分表、不混用**；"
+        f"轨迹落在 `reports/{db_path.name}`，`config` 字段形如 `baseline#r2`。",
         f"> 模型：`{payload['model']}` · 网关：`{cfg.deepseek.get('base_url', '')}` · "
         f"落库 {raw_count} 条轨迹（含补跑），按格子去重后 {len(rows)} 个。",
         "",
@@ -284,46 +306,57 @@ def do_report(cfg, cases: list[dict]) -> None:
                      f"**{s['asr']}%** | [{s['ci'][0]}%, {s['ci'][1]}%] | {s['invalid']} |")
 
     # 显著性检验：区间重叠只是直觉，Fisher 给出可引用的 p 值。
-    # 消融对照用 hardened#r1（同为 24 格 × 1 轮），避免拿两轮合并的样本混比。
+    # 消融对照与边际表用同一口径（pooled 或 #r1），见上面 marginal 的注释。
     main_p = None
     if "baseline" in summary and "hardened" in summary:
         b, h = summary["baseline"], summary["hardened"]
         main_p = fisher_exact(b["success"], b["valid"], h["success"], h["valid"])
-    h1 = stat("hardened", "hardened#r1") if "hardened" in summary else None
+    h_stat = (stat("hardened") if pooled else stat("hardened", "hardened#r1")) \
+        if "hardened" in summary else None
+    cmp_label = "合并样本" if pooled else "#r1"
     significance = {"main": main_p}
     lines += ["", "## 一之二、显著性检验（Fisher 精确检验，双侧）", "",
+              f"> 消融对照口径：{cmp_label}（与边际表一致）。", "",
               "| 比较 | 命中/有效 | 命中/有效 | p | 判定 |", "| --- | --- | --- | --- | --- |"]
     if main_p is not None:
         b, h = summary["baseline"], summary["hardened"]
         lines.append(f"| `baseline` vs `hardened`（主效应） | {b['success']}/{b['valid']} | "
                      f"{h['success']}/{h['valid']} | **{fmt_p(main_p)}** | {verdict_at(main_p)} |")
-    if h1:
+    if h_stat:
         for layer in LAYERS:
             key = f"no_{layer}"
             if key not in summary:
                 continue
-            one = stat(key, f"{key}#r1")
-            p = fisher_exact(one["success"], one["valid"], h1["success"], h1["valid"])
+            one = stat(key) if pooled else stat(key, f"{key}#r1")
+            p = fisher_exact(one["success"], one["valid"], h_stat["success"], h_stat["valid"])
             significance[key] = p
-            lines.append(f"| `hardened#r1` vs `{key}#r1` | {h1['success']}/{h1['valid']} | "
+            lines.append(f"| `hardened` vs `{key}`（{cmp_label}） | {h_stat['success']}/{h_stat['valid']} | "
                          f"{one['success']}/{one['valid']} | {fmt_p(p)} | {verdict_at(p)} |")
     lines.append("")
     if main_p is not None and main_p < 0.05:
         lines.append("**主效应达到显著**：可以拒绝「防御前后攻破率相同」。"
                      "但这只说明这组用例下防御有作用，不等于证明防御在所有场景都安全。")
+    sig_layers = [k for k, p in significance.items()
+                  if k != "main" and p is not None and p < 0.05]
     insig = [k for k, p in significance.items() if k != "main" and p is not None and p >= 0.05]
+    if sig_layers:
+        lines.append("")
+        lines.append("已达显著的消融配置：" + "、".join(f"`{k}`" for k in sig_layers)
+                     + "。这些层的边际有统计支撑，可以写进效果结论"
+                       "（仍只针对这组用例集，不代表所有攻击面）。")
     if insig:
         lines.append("")
-        lines.append("逐层消融的对照" + "、".join(f"`{k}`" for k in insig) + "均**未达显著**——"
-                     "包括 ② 工具白名单那个 +13.0 pp 的信号。消融每格只跑 1 轮，"
-                     "样本量不足以把「有信号」升级成「统计显著」，所以边际只作定性归因，"
-                     "不写进对外效果结论。要消掉这个边界，需要给 5 个消融配置各补一轮。")
+        tail = ("对照口径为合并的 2 轮样本。" if pooled else
+                "消融每格只跑 1 轮，样本量不足以把「有信号」升级成「统计显著」；"
+                "要坐实需要给 5 个消融配置各补一轮。")
+        lines.append("其余消融配置 " + "、".join(f"`{k}`" for k in insig)
+                     + " 的边际仍为 0、对照未达显著，只作定性归因，不写进对外效果结论。" + tail)
     payload["significance"] = {k: (None if v is None else round(v, 6))
                                for k, v in significance.items()}
 
     lines += ["", "## 二、按载荷家族", "", "| 家族 | " + " | ".join(f"`{n}`" for n in order) + " |",
               "| --- | " + " | ".join("---" for _ in order) + " |"]
-    for f, fname in FAMILY_NAMES.items():
+    for f, fname in family_names.items():
         cells = []
         for n in order:
             p = summary[n]["per_family"].get(f, {"total": 0, "success": 0})
@@ -331,8 +364,10 @@ def do_report(cfg, cases: list[dict]) -> None:
         lines.append(f"| {fname} | " + " | ".join(cells) + " |")
 
     lines += ["", "## 三、逐层边际（去掉该层后 ASR 上升多少）", "",
-              "> 对照口径统一为 24 格 × 1 轮：左边取 `hardened#r1`，右边取该消融配置的 `#r1`，"
-              "不与两轮合并的 `hardened` 混比。",
+              ("> 对照口径：两边都用**合并样本**（同为 2 轮），不与单轮混比。"
+               if pooled else
+               "> 对照口径统一为 24 格 × 1 轮：左边取 `hardened#r1`，右边取该消融配置的 `#r1`，"
+               "不与两轮合并的 `hardened` 混比。"),
               "", "| 防御层 | 全开 ASR (n) | 去掉后 ASR (n) | 边际 |", "| --- | --- | --- | --- |"]
     if marginal:
         for m in marginal:
@@ -346,7 +381,7 @@ def do_report(cfg, cases: list[dict]) -> None:
     if leaked:
         lines += ["| 用例 | 标题 | 家族 |", "| --- | --- | --- |"]
         for cid in leaked:
-            lines.append(f"| `{cid}` | {title.get(cid, '')} | {FAMILY_NAMES.get(family.get(cid), family.get(cid))} |")
+            lines.append(f"| `{cid}` | {title.get(cid, '')} | {family_names.get(family.get(cid), family.get(cid))} |")
     else:
         lines.append("无。")
 
@@ -364,8 +399,10 @@ def do_report(cfg, cases: list[dict]) -> None:
         "## 六、实验边界（不藏着）",
         "",
         "- 这一组的用例集、轨迹库、报告都与正式 60 条**完全分开**；7.1 节之外的数字不适用这里，反之亦然。",
-        "- `baseline` / `hardened` 每格重复 2 轮；逐层消融每格 1 轮，**没有重复采样**，"
-        "所以边际数字只作定性归因，不作区间比较。",
+        ("- `baseline` / `hardened` 与逐层消融都重复了 2 轮，边际与显著性检验用**合并样本同口径**对照。"
+         if pooled else
+         "- `baseline` / `hardened` 每格重复 2 轮；逐层消融每格 1 轮，**没有重复采样**，"
+         "所以边际数字只作定性归因，不作区间比较。"),
         "- 网关在 8 并发无限速时返回过 HTTP 429；后续批次统一 `--rpm 30` 并给 429 加长退避。"
         "回答为空（模型到步数上限没给结论）或调用抛异常的运行一律记为无效样本、不计入分母。",
         "- 同一格子补跑会产生多行，报告按 `(config, case_id)` 只取最新一行，避免重复计数。",
@@ -374,11 +411,11 @@ def do_report(cfg, cases: list[dict]) -> None:
         "## 七、复现", "",
               "每批 `--max-jobs 24`，**同一条命令重复执行到输出「待跑 0 条」为止**（断点续跑自动跳过已完成格子）：",
               "", "```bash",
-              "python scripts/adaptive_eval.py --fresh",
-              "python scripts/adaptive_eval.py --configs baseline,hardened --repeat 2 --max-jobs 24 --workers 8 --rpm 30 --retries 3 --timeout 90",
-              "python scripts/adaptive_eval.py --configs no_isolation,no_allowlist,no_params,no_gate,no_filter --repeat 1 --max-jobs 24 --workers 8 --rpm 30 --retries 3 --timeout 90",
-              "python scripts/adaptive_eval.py --report-only", "```", ""]
-    out_md = cfg.evaluation.reports_dir / "adaptive.md"
+              f"python scripts/adaptive_eval.py --fresh --tag {tag}" if tag else "python scripts/adaptive_eval.py --fresh",
+              f"python scripts/adaptive_eval.py --cases {cases_rel} --tag {tag} --db {db_path.name} --configs baseline,hardened --repeat 2 --max-jobs 24 --workers 8 --rpm 30",
+              f"python scripts/adaptive_eval.py --cases {cases_rel} --tag {tag} --db {db_path.name} --configs no_isolation,no_allowlist,no_params,no_gate,no_filter --repeat 2 --max-jobs 24 --workers 8 --rpm 30",
+              f"python scripts/adaptive_eval.py --cases {cases_rel} --tag {tag} --db {db_path.name} --report-only", "```", ""]
+    out_md = cfg.evaluation.reports_dir / f"adaptive{suffix}.md"
     out_md.write_text("\n".join(lines), encoding="utf-8")
     # 显著性检验在报告渲染时算出来，JSON 必须最后写，否则会漏字段。
     out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -391,6 +428,14 @@ def do_report(cfg, cases: list[dict]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="自适应攻击集实验")
     parser.add_argument("--cases", default="cases/attack_adaptive.yaml")
+    parser.add_argument("--db", default="adaptive.db",
+                        help="轨迹库文件名（放在 reports/ 下）；不同实验用不同库，避免格子混在一起")
+    parser.add_argument("--tag", default="",
+                        help="报告后缀：adaptive-<tag>.md / adaptive-summary-<tag>.json")
+    parser.add_argument("--model", default="", help="覆盖模型名（跨模型对照用）")
+    parser.add_argument("--max-tokens", type=int, default=0,
+                        help="覆盖单次回复上限；推理型模型 400 会被 thinking 吃光导致空 content")
+    parser.add_argument("--provider", default="deepseek", help="provider 名（默认 deepseek）")
     parser.add_argument("--configs", default="baseline,hardened")
     parser.add_argument("--labels", default="",
                         help="精确指定要跑的完整标签，逗号分隔，如 'baseline#r2,hardened#r2'（便于分批断点续跑）")
@@ -406,25 +451,31 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config()
-    cases = load_cases((ROOT / args.cases) if not Path(args.cases).is_absolute() else Path(args.cases))
-    db_path = cfg.evaluation.db_path.with_name("adaptive.db")
+    cases_path = (ROOT / args.cases) if not Path(args.cases).is_absolute() else Path(args.cases)
+    cases = load_cases(cases_path)
+    db_path = cfg.evaluation.reports_dir / args.db
     store = Store(db_path)
     if args.fresh:
         store.con.execute("delete from runs")
         store.flush()
         print("已清空实验库", flush=True)
 
+    kwargs = cfg.provider_kwargs(args.provider)
+    if args.model:
+        kwargs["model"] = args.model
+    if args.max_tokens:
+        kwargs["max_tokens"] = args.max_tokens
     if not args.report_only:
-        kwargs = cfg.provider_kwargs("deepseek")
         kwargs["retries"] = args.retries
         kwargs["timeout"] = args.timeout
         if args.rpm:
             kwargs["rpm"] = args.rpm
-        provider = get_provider("deepseek", **kwargs)
-        print(f"模型={kwargs.get('model')} endpoint={kwargs.get('base_url')} 用例={len(cases)}", flush=True)
+        provider = get_provider(args.provider, **kwargs)
+        print(f"模型={kwargs.get('model')} endpoint={kwargs.get('base_url')} "
+              f"用例={len(cases)} 库={db_path.name}", flush=True)
         do_run(args, cfg, provider, cases, store)
     store.close()
-    do_report(cfg, cases)
+    do_report(cfg, cases, db_path, args.tag, args.cases, kwargs.get("model", ""))
 
 
 if __name__ == "__main__":

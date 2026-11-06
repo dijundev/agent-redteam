@@ -4,7 +4,7 @@ __pycache__/
 .pytest_cache/
 .env
 reports/runs.db
-reports/adaptive.db
+reports/adaptive*.db
 data/outbox.jsonl
 .idea/
 reports/*.log

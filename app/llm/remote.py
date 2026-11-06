@@ -8,15 +8,24 @@
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
+import re
 import threading
 import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
+from pathlib import Path
+
+from app.common.paths import ROOT
 
 from .base import Decision
+
+# 用例文本里用 [IMAGE:<相对项目根的路径>] 挂一张图片；解析成 OpenAI 兼容的
+# image_url data URI。模型只能从图片像素里读到指令，这才算真的多模态注入。
+IMG_MARK = re.compile(r"\[IMAGE:([^\]]+)\]")
 
 # 全局限速：网关对「每分钟请求数」敏感，超了会返回 401（伪装成鉴权失败）
 _RATE_LOCK = threading.Lock()
@@ -43,14 +52,32 @@ JSON_RULES = """只输出一个 JSON，不要输出任何其他文字。两种�
 {"action":"final","text":"给用户的回答"}"""
 
 
-def _transcript(view: dict) -> list[dict]:
+def _transcript(view: dict, multimodal: bool = False) -> list[dict]:
     lines = ["可用工具：" + json.dumps(view.get("tools", []), ensure_ascii=False)]
     lines.append("当前用户消息：" + view.get("turn", ""))
     for i, obs in enumerate(view.get("observations", []), 1):
         lines.append(f"[工具结果 {i} · {obs.get('tool')}]\n{obs.get('content', '')}")
+    system = view["system"] + "\n\n" + JSON_RULES
+    text = "\n\n".join(lines)
+    if multimodal:
+        images = IMG_MARK.findall(text)
+        if images:
+            parts: list[dict] = [{"type": "text", "text": IMG_MARK.sub("[附图]", text)}]
+            for rel in images:
+                p = Path(rel)
+                if not p.is_absolute():
+                    p = ROOT / p
+                if not p.is_file():
+                    continue
+                ext = p.suffix.lstrip(".").lower() or "png"
+                b64 = base64.b64encode(p.read_bytes()).decode()
+                parts.append({"type": "image_url",
+                              "image_url": {"url": f"data:image/{ext};base64,{b64}"}})
+            return [{"role": "system", "content": system},
+                    {"role": "user", "content": parts}]
     return [
-        {"role": "system", "content": view["system"] + "\n\n" + JSON_RULES},
-        {"role": "user", "content": "\n\n".join(lines)},
+        {"role": "system", "content": system},
+        {"role": "user", "content": text},
     ]
 
 
@@ -165,7 +192,11 @@ class OpenAICompatProvider:
             except urllib.error.HTTPError as exc:
                 body = exc.read()[:300].decode("utf-8", "replace")
                 # 中转不支持 response_format：去掉后重试一次
-                if exc.code == 400 and "response_format" in body and self._json_mode:
+                # 有些网关不支持 response_format，或在多模态输入下拒绝它；
+                # 两种情况都先去掉该字段重试一次。
+                unsupported = ("response_format" in body
+                               or re.search(r"image|multimodal|vision|content.*array", body, re.I))
+                if exc.code == 400 and unsupported and self._json_mode:
                     self._json_mode = False
                     payload.pop("response_format", None)
                     self.usage["retries"] += 1
@@ -184,7 +215,7 @@ class OpenAICompatProvider:
         raise RuntimeError(f"模型调用失败：{last_error}")
 
     def decide(self, view: dict) -> Decision:
-        messages = _transcript(view)
+        messages = _transcript(view, multimodal=True)
         raw = self._post(messages)
         parsed = _parse_json(raw)
         if parsed is not None:
