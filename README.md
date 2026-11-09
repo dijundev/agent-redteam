@@ -10,12 +10,12 @@
 **线上地址**（GitHub Pages，源分支 `gh-pages`；自定义域名 `dijundev.localhost.cc` 的 CNAME 指向 `dijundev.github.io`）：
 
 - 作品集 <https://dijundev.localhost.cc/>
-- **作品集 PDF（9 页，可直接下载）** <https://dijundev.localhost.cc/dijundev-portfolio.pdf>
+- **作品集 PDF（10 页，可直接下载）** <https://dijundev.localhost.cc/dijundev-portfolio.pdf>
 - 评测看板 <https://dijundev.localhost.cc/dashboard.html>
 
 PDF 由 `python scripts/export_portfolio_pdf.py --out <路径>` 导出：默认读 `gh-pages:index.html`
 （线上权威版本），展开折叠块并注入打印样式后用本机 Edge/Chrome 无头打印，不依赖手工点浏览器打印。
-源 HTML 在相邻 `portfolio/index.html`，改完作品集要同步过去。
+源 HTML 在相邻 `portfolio/index.html`，改完作品集要同步过去；发布前跑 `python scripts/check_portfolio_wording.py` 做措辞体检（禁词 0 命中才允许上线）。
 
 ## 一、当前基线（本机实测）
 
