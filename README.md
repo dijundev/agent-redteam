@@ -10,7 +10,7 @@
 **线上地址**（GitHub Pages，源分支 `gh-pages`；自定义域名 `dijundev.localhost.cc` 的 CNAME 指向 `dijundev.github.io`）：
 
 - 作品集 <https://dijundev.localhost.cc/>
-- **作品集 PDF（10 页，可直接下载）** <https://dijundev.localhost.cc/dijundev-portfolio.pdf>
+- **作品集 PDF（9 页，可直接下载）** <https://dijundev.localhost.cc/dijundev-portfolio.pdf>
 - 评测看板 <https://dijundev.localhost.cc/dashboard.html>
 
 PDF 由 `python scripts/export_portfolio_pdf.py --out <路径>` 导出：默认读 `gh-pages:index.html`
