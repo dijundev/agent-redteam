@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>刘迪君 · AI 应用开发 / Agent 工程 · 作品集</title>
-<meta name="description" content="刘迪君的作品集：AI 应用开发与 Agent 工程方向。智能经营分析 Agent（问数一致率 98.1%）、自助式低代码看板平台、Agent 安全靶场。">
-<meta property="og:title" content="刘迪君 · AI 应用开发 / Agent 工程">
-<meta property="og:description" content="把大模型关进确定性边界里：指标语义层、AST 白名单、LangGraph 编排。">
+<title>刘迪君 · AI Agent 应用开发 · 作品集</title>
+<meta name="description" content="刘迪君的作品集：AI Agent 应用开发。多智能体分析系统（问数一致率 98.1%）、巡检机器人任务执行仿真平台、Agent 安全评测靶场、自助式低代码看板平台。">
+<meta property="og:title" content="刘迪君 · AI Agent 应用开发">
+<meta property="og:description" content="把自然语言变成可校验、能恢复的执行链路：任务规划、工具契约、状态机与评测。">
 <meta name="color-scheme" content="light">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -97,7 +97,7 @@ section.band .wrap{padding:44px 24px}
 .bd.done{color:var(--acc);border-color:#bfe0da;background:var(--acc-soft)}
 .bd.wip{color:#7c5bd6;border-color:#ded3f7;background:#f5f1fe}
 .proj h3{font-size:17.5px;font-weight:750;margin-bottom:8px}
-/* 三行摘要：问题 / 我负责的 / 实际效果 —— 收起状态就要能读完 */
+/* 三行摘要：问题 / 负责部分 / 实际效果 —— 收起状态就要能读完 */
 .brief{margin-top:15px;border-top:1px dashed var(--line);padding-top:13px;display:flex;flex-direction:column;gap:9px}
 .brief .br{display:grid;grid-template-columns:82px 1fr;gap:14px;align-items:start}
 .brief .bk{font-size:12px;font-weight:700;color:var(--acc);letter-spacing:.03em;line-height:1.9;white-space:nowrap}
@@ -219,7 +219,7 @@ footer span{margin-left:auto}
 
 <header class="nav">
   <div class="wrap">
-    <div class="who">刘迪君<span>AI 应用开发 · Agent 工程</span></div>
+    <div class="who">刘迪君<span>AI 应用开发 · AI Agent 工程</span></div>
     <nav>
       <a href="#projects">项目</a>
       <a href="#creed">方法论</a>
@@ -237,17 +237,18 @@ footer span{margin-left:auto}
     <div class="eyebrow">
       <span class="pill"><i class="dot"></i>深圳 / 广州 · 随时到岗</span>
       <span class="pill">2 年开发经验（2024.06 起）</span>
-      <span class="pill">近一年专职大模型应用与 Agent 工程</span>
-      <span class="pill">本科 · 计算机科学与技术（统招）</span>
+      <span class="pill">全日制本科 · 计算机科学与技术</span>
+      <span class="pill">任务拆解 · 工具调用 · 长流程执行</span>
     </div>
     <h1>刘迪君
-      <small>AI 应用开发 / Agent 工程 · 把大模型约束在确定性工程边界内</small>
+      <small>AI 应用开发 / AI Agent 工程 · 把自然语言变成可校验、能恢复的执行链路</small>
     </h1>
     <p class="lead">
-      我做的事可以概括成一句话：<strong>业务规则写进代码和配置，模型只负责语言理解与结构拼装</strong>。
-      主导开发的电商经营分析系统已上线、业务每天在用——
-      问数一致率从 <b>35.6%</b> 提到 <b>98.1%</b>，日报制作从人工 2 小时压到 5 分钟内，
-      50 并发 P95 从 26.6 s 降到 4.18 s，28 个越权用例 100% 拦截。
+      全日制本科（计算机科学与技术），2 年开发经验。前期做数据接入与 AI 应用开发，近一年主做
+      <strong>「自然语言 → 可校验动作序列」这一层</strong>：公司侧核心开发已上线的多智能体分析系统（5 人团队），
+      个人独立完成巡检机器人任务执行仿真平台与 Agent 安全评测靶场。
+      系统已上线并在业务侧日常使用——问数一致率从 <b>35.6%</b> 提到 <b>98.1%</b>，
+      日报制作从人工 2 小时压到 5 分钟内，50 并发 P95 从 26.6 s 降到 4.18 s，28 个越权用例 100% 拦截。
     </p>
     <div class="kpis">
       <div class="kpi"><div class="v">98.1<em>%</em></div><div class="k">问数一致率（原 35.6%，312 条黄金用例）</div></div>
@@ -257,7 +258,8 @@ footer span{margin-left:auto}
     </div>
     <div class="cta">
       <a class="btn primary" href="#projects">看项目细节</a>
-      <a class="btn" href="mailto:liudijunfo@foxmail.com" data-copy="liudijunfo@foxmail.com">邮件联系（点击复制地址）</a>
+      <a class="btn" href="tel:19295745865">电话 19295745865</a>
+      <a class="btn" href="mailto:liudijunfo@foxmail.com" data-copy="liudijunfo@foxmail.com">邮箱 liudijunfo@foxmail.com</a>
       <a class="btn" href="#cap">技能清单</a>
     </div>
   </div>
@@ -266,12 +268,12 @@ footer span{margin-left:auto}
 <section class="band" id="cap">
   <div class="wrap">
     <div class="h2"><span class="num">01</span><h2>能力构成</h2></div>
-    <p class="sub">不是「用过很多框架」，而是每一块都能讲清：为什么这么选、边界在哪、怎么验证。</p>
+    <p class="sub">每一块都能说清为什么这么选、适用条件是什么、怎么验证。</p>
     <div class="grid4">
       <div class="cap">
-        <h4><i class="tick"></i>Agent 编排</h4>
-        <p>用代码控制流替代自由 Agent 循环：状态机固定主链路，只在必需处留条件边；会话状态持久化，失败可重放。工具调用、多智能体拆分、MCP 接入。</p>
-        <div class="tags"><span class="tag">LangGraph</span><span class="tag">StateGraph</span><span class="tag">Checkpointer</span><span class="tag">ReAct</span><span class="tag">MCP</span></div>
+        <h4><i class="tick"></i>Agent 编排与任务规划</h4>
+        <p>用代码控制流替代自由 Agent 循环：状态机固定主链路，只在必需处留条件边；会话状态持久化、进度落盘、失败可重放。工具调用、多智能体拆分、MCP 接入；动作层按 ROS 2 Action 语义实现 goal / feedback / result / cancel 与终态机。</p>
+        <div class="tags"><span class="tag">LangGraph</span><span class="tag">StateGraph</span><span class="tag">Checkpointer</span><span class="tag">任务规划</span><span class="tag">MCP</span></div>
       </div>
       <div class="cap">
         <h4><i class="tick"></i>RAG 与问数</h4>
@@ -295,7 +297,7 @@ footer span{margin-left:auto}
 <section class="band" id="projects">
   <div class="wrap">
     <div class="h2"><span class="num">02</span><h2>项目</h2></div>
-    <p class="sub">每个项目三句话说清：解决什么问题、我负责哪部分、实际效果怎么样。</p>
+    <p class="sub">每个项目三句话说清：解决什么问题、负责哪部分、实际效果怎么样。</p>
 
     <!-- ============ 项目 01 ============ -->
     <article class="proj" id="p1">
@@ -304,23 +306,23 @@ footer span{margin-left:auto}
         <div>
           <div class="badges">
             <span class="bd work">工作项目</span>
-            <span class="bd">2025.11 – 2026.07</span>
+            <span class="bd">2025.08 – 2026.10（在职期间）</span>
             <span class="bd">核心开发 · 5 人团队（后端 2 / 前端 1 / 业务 2）</span>
             <span class="bd done">已上线</span>
           </div>
-          <h3>面向电商经营场景的智能经营分析 Agent</h3>
+          <h3>智能经营分析 Agent（多智能体分析系统）</h3>
           <div class="brief">
             <div class="br">
               <span class="bk">解决什么问题</span>
-              <p class="bt">业务方问一个数要等数据同学排期；同一指标在不同报表里口径不一致，对数靠人工核对；大模型直接生成 SQL 既不可信、也过不了数据权限。日报长期靠人工拼表。</p>
+              <p class="bt">业务人员用一句话提问，系统自动完成取数、计算与解读，替代人工导数、拼表、写报表。要解决的三个问题：指标口径不统一、大模型直接生成 SQL 不可信、多表权限管控难。</p>
             </div>
             <div class="br">
               <span class="bk">我负责的部分</span>
-              <p class="bt">核心开发，5 人团队里后端 2 人之一。<b>独立负责四块</b>：RAG 检索链路、指标语义层、缓存与并发控制、LangGraph 编排；并落地 AST 白名单与权限下推的安全校验。</p>
+              <p class="bt">核心开发，5 人团队里后端 2 人之一。<b>负责四块</b>：RAG 检索链路、指标语义层、缓存与并发控制、LangGraph 编排；并落地 AST 白名单与权限下推的安全校验。</p>
             </div>
             <div class="br">
               <span class="bk">实际应用效果</span>
-              <p class="bt">已上线交付业务方日常使用——智能问数、自动日报、异动归因、渠道诊断四类场景跑在真实业务数据上，覆盖运营 / 主管 / 分析师 / 经理四类角色；日报从人工拼表变成系统内直接出。</p>
+              <p class="bt">系统已上线，在业务侧日常使用，服务运营、分析师、管理者等多类角色；问数、日报、异动归因等场景跑在真实业务数据上，日报从人工拼表变成系统内直接出。</p>
             </div>
           </div>
         </div>
@@ -385,7 +387,7 @@ footer span{margin-left:auto}
           </div>
 
           <div class="dblock">
-            <h5>我负责的四块</h5>
+            <h5>负责的四块</h5>
             <ul>
               <li><b>RAG 检索链路</b>：以字段元数据、Few-shot 用例、指标别名三类向量集合（67 / 104 / 74 条）为检索源，最小检索单元是「一个字段 / 一条用例 / 一个别名」；用 <b>Join 图 BFS 最小边集</b>补全多表拓扑，用<b>粒度对齐</b>防止一对多 JOIN 把金额放大；以 score_threshold + payload 过滤 + 业务优先级剪枝替代两阶段 rerank，省掉一次模型调用。</li>
               <li><b>指标语义层</b>：12 个核心指标的口径（公式 / 过滤条件 / 时间归属 / 可用维度 / 权限标签）配置化落库，由统一取数规划器翻译成只读 SQL——口径变更不发版，代码侧零硬编码公式。</li>
@@ -395,7 +397,7 @@ footer span{margin-left:auto}
           </div>
 
           <div class="dblock">
-            <h5>三次真实故障（比成绩更能说明做事方式）</h5>
+            <h5>三次线上问题的定位与修复</h5>
             <div class="fault">
               <b>一对多 JOIN 让归因结论被挤出 Top3</b>
               <p>一次异动归因，系统把主因算到了品类上，与业务判断对不上。根因：品类维度 JOIN 明细表后仍沿用订单级金额求和，一个订单含多商品时金额被重复累加——数字量级「看起来像那么回事」、不报错，只有排名异常才暴露。改为明细金额聚合，并用造数保证「明细金额之和 == 订单实付金额」，实测整月差值 0。</p>
@@ -435,6 +437,187 @@ footer span{margin-left:auto}
         <div>
           <div class="badges">
             <span class="bd">个人项目</span>
+            <span class="bd">2026.10 – 2026.11</span>
+            <span class="bd">独立开发</span>
+            <span class="bd done">仿真环境，非真机</span>
+          </div>
+          <h3>巡检机器人任务执行仿真平台</h3>
+          <div class="brief">
+            <div class="br">
+              <span class="bk">解决什么问题</span>
+              <p class="bt">把自然语言巡检指令翻译成按序、可取消、能恢复的动作序列，用于配电房、机柜区等点位的日常巡检。难点不在「生成一段计划」，而在计划落库前的校验、执行中的进度反馈，以及中断之后怎么续跑。</p>
+            </div>
+            <div class="br">
+              <span class="bk">我负责的部分</span>
+              <p class="bt"><b>独立开发</b>：任务规划与三道校验、按 ROS 2 Action 语义自行实现的动作层（goal / feedback / result / cancel 与终态机）、异常恢复、多传感器告警规则引擎，以及回归用例集。路径规划用 A* + 栅格代价膨胀；二维栅格仿真，非真机。</p>
+            </div>
+            <div class="br">
+              <span class="bk">实际应用效果</span>
+              <p class="bt">40 轮回归 / 84 个导航目标 <b>100% 达成</b>，7 次低电量中断全部续跑；注入 34 个故障告警召回 100%，13 轮无注入误报 0；10 条坏计划（越权 / 未知点位 / 错配 / 地图过期）100% 拦截；52 个 pytest 用例全绿。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mrow">
+        <div class="mcell"><div class="v">84 / 84</div><div class="k">40 轮回归中的导航目标达成数</div></div>
+        <div class="mcell"><div class="v">7 / 7</div><div class="k">低电量中断后全部断点续跑</div></div>
+        <div class="mcell"><div class="v">34 / 34</div><div class="k">注入故障告警召回，13 轮无误报</div></div>
+        <div class="mcell"><div class="v">52 条</div><div class="k">pytest 用例全绿</div></div>
+      </div>
+
+      <details>
+        <summary><span class="chev">▸</span>展开：三个设计要点</summary>
+        <div class="detail">
+          <div class="dblock">
+            <h5>任务规划与三道校验</h5>
+            <p>自然语言先转成结构化巡检计划，落库前必经 JSON Schema、地点白名单、地图 SHA 指纹三道校验；未声明的动作类型一律拒绝，校验失败回灌重生成，重试用完即失败。规则与模型双路径，无模型环境也能离线回归。</p>
+          </div>
+          <div class="dblock">
+            <h5>Action 执行层与异常恢复</h5>
+            <p>按 ROS 2 Action 语义实现目标派发、进度反馈、结果回收与取消，配终态机；串行目标队列 + 单写锁保证单目标执行，每步进度落盘，中断后从断点续跑。电量低于 25% 中止当前目标、回充至 80% 后重排剩余步骤；导航超时、卡死、人工接管三态分别收敛并留痕。</p>
+          </div>
+          <div class="dblock">
+            <h5>感知与告警</h5>
+            <p>温度 / 湿度 / 气体 / 电压 / 指示灯等多传感器统一采集接口与单位归一；可疑读数降级为 UNKNOWN 并补测。告警按「持续时长 + 滞回 + 去重」判定，规则身份按传感器 / 比较符 / 阈值区分，避免多条规则互相清计时。</p>
+          </div>
+        </div>
+      </details>
+
+      <p class="codes">
+        <span class="ck">代码</span>
+        <a href="https://github.com/dijundev/robot-sim-agent" target="_blank" rel="noopener">GitHub · robot-sim-agent ↗</a>
+      </p>
+
+      <div class="stack">
+        <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">WebSocket</span>
+        <span class="tag">A* 栅格规划</span><span class="tag">状态机</span><span class="tag">pytest</span>
+      </div>
+    </article>
+
+    <!-- ============ 项目 03 ============ -->
+    <article class="proj" id="p3">
+      <div class="proj-head">
+        <div class="idx">03</div>
+        <div>
+          <div class="badges">
+            <span class="bd">个人项目</span>
+            <span class="bd">2026.10 – 至今</span>
+            <span class="bd">独立开发</span>
+            <span class="bd done">已完成</span>
+            <span class="bd done">真模型实测完成</span>
+          </div>
+          <h3>Agent 安全靶场：提示注入红队与防御评测</h3>
+          <div class="brief">
+            <div class="br">
+              <span class="bk">解决什么问题</span>
+              <p class="bt">Agent 一旦带上工具（读文件 / 查库 / 发消息 / 发请求），一段藏在文档里的提示注入就能把数据带出去。但团队没法回答「我们的 Agent 到底有多不安全」——缺一套可复现、可比较的量化口径。</p>
+            </div>
+            <div class="br">
+              <span class="bk">我负责的部分</span>
+              <p class="bt"><b>独立开发</b>：60 条攻击用例设计（5 类攻击面）、带四个工具的目标 Agent、五层可开关防御、规则断言 + LLM 判据、评测流水线与看板。</p>
+            </div>
+            <div class="br">
+              <span class="bk">实际应用效果</span>
+              <p class="bt">在真实大模型上完成全量评测：24 条自适应攻击重复 2 轮，防御全关被攻破 <b>28.3%</b>，防御全开 <b>0 漏</b>；换一家厂商的模型重跑，基线升到 <b>52.2%</b>，全开仍是 <b>0</b>。另做了图片注入与编码混淆载荷的对照测试，均未出现绕过。逐层消融定位到工具白名单是关键防线。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mrow">
+        <div class="mcell"><div class="v">28.3% → 0%</div><div class="k">24 条自适应攻击 × 2 轮，防御全关 → 全开</div></div>
+        <div class="mcell"><div class="v">52.2% → 0%</div><div class="k">换一家厂商的模型重跑同一套用例</div></div>
+        <div class="mcell"><div class="v">7 配置</div><div class="k">五层防御逐一消融，定位关键防线</div></div>
+        <div class="mcell"><div class="v">38 条</div><div class="k">单元测试与端到端回归全绿</div></div>
+      </div>
+
+      <details>
+        <summary><span class="chev">▸</span>展开：架构 · 评测方法 · 实测结果</summary>
+        <div class="detail">
+          <div class="arch">
+            <svg viewBox="0 0 860 190" role="img" aria-label="红队评测数据流">
+              <g font-family="-apple-system,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif">
+                <rect x="8" y="24" width="150" height="66" rx="10" fill="#ffffff" stroke="#e6e8ec"/>
+                <text x="83" y="50" font-size="12" font-weight="700" fill="#15181d" text-anchor="middle">攻击用例库</text>
+                <text x="83" y="70" font-size="11" fill="#646e7d" text-anchor="middle">24 条 · 4 类载荷</text>
+
+                <path d="M158 57 H186" stroke="#c9d1da" stroke-width="1.5"/>
+
+                <rect x="186" y="24" width="150" height="66" rx="10" fill="#ffffff" stroke="#e6e8ec"/>
+                <text x="261" y="50" font-size="12" font-weight="700" fill="#15181d" text-anchor="middle">攻击 Agent</text>
+                <text x="261" y="70" font-size="11" fill="#646e7d" text-anchor="middle">自适应载荷</text>
+
+                <path d="M336 57 H364" stroke="#c9d1da" stroke-width="1.5"/>
+
+                <rect x="364" y="16" width="152" height="82" rx="10" fill="#fdf4e7" stroke="#f2d9b5"/>
+                <text x="440" y="40" font-size="12" font-weight="700" fill="#b45309" text-anchor="middle">防御层（可逐层开关）</text>
+                <text x="440" y="59" font-size="10.8" fill="#7a5a25" text-anchor="middle">指令隔离 · 工具白名单</text>
+                <text x="440" y="75" font-size="10.8" fill="#7a5a25" text-anchor="middle">权限闸门 · 输出过滤</text>
+                <text x="440" y="91" font-size="10.8" fill="#7a5a25" text-anchor="middle">轨迹监控</text>
+
+                <path d="M516 57 H544" stroke="#c9d1da" stroke-width="1.5"/>
+
+                <rect x="544" y="24" width="150" height="66" rx="10" fill="#ffffff" stroke="#e6e8ec"/>
+                <text x="619" y="50" font-size="12" font-weight="700" fill="#15181d" text-anchor="middle">目标 Agent</text>
+                <text x="619" y="70" font-size="11" fill="#646e7d" text-anchor="middle">读文件 / 查库 / 发消息 / HTTP</text>
+
+                <path d="M694 57 H722" stroke="#c9d1da" stroke-width="1.5"/>
+
+                <rect x="722" y="24" width="128" height="66" rx="10" fill="#f7fbfa" stroke="#cfe6e2"/>
+                <text x="786" y="50" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">判定与指标</text>
+                <text x="786" y="70" font-size="11" fill="#646e7d" text-anchor="middle">轨迹断言</text>
+
+                <rect x="186" y="120" width="664" height="52" rx="10" fill="#f4f6f8" stroke="#e6e8ec"/>
+                <text x="518" y="143" font-size="11.8" fill="#4a5563" text-anchor="middle">输出：攻击成功率 × 正常任务通过率 × 逐层防御的收益对比，每条运行都有完整轨迹</text>
+                <text x="518" y="161" font-size="10.8" fill="#9aa4b2" text-anchor="middle">同一用例集可复现，改动一次只动一个变量</text>
+              </g>
+            </svg>
+          </div>
+          <div class="dblock">
+            <h5>为什么做这个</h5>
+            <p>带工具的 Agent 一旦被提示注入命中，风险发生在工具调用上：模型能拒绝直接的恶意指令，却可能照着文档里的伪造指令去读文件、查库或请求外部地址。这个项目把这件事变成可测量的数字，也延续了前两个项目的同一条主线：<b>不可信输入不进执行路径</b>——在 SQL 上是 AST 白名单与权限下推，在 Agent 上是工具白名单与轨迹断言。</p>
+          </div>
+          <div class="dblock">
+            <h5>评测方法</h5>
+            <ul>
+              <li><b>命中判定</b>：断言工具调用序列——是否调用了越权工具、参数是否含敏感路径、外发请求是否携带密钥；只有工具真正执行成功才算攻破，被拦截的调用不计入。</li>
+              <li><b>误杀对照</b>：每个配置同时跑一组不含攻击的正常任务，防御导致正常任务失败会计入误杀率，不做只测攻击的乐观评测。</li>
+              <li><b>可复现</b>：用例集、判据与逐条轨迹入库；改动一次只动一个变量，跑同一套集对比。</li>
+            </ul>
+          </div>
+          <div class="dblock">
+            <h5>实测结果</h5>
+            <ul>
+              <li><b>效果</b>：24 条自适应攻击各跑 2 轮，防御全关被攻破 28.3%，防御全开 0 漏；换一家厂商的模型重跑同一套用例，基线升到 52.2%，全开仍是 0。</li>
+              <li><b>逐层消融</b>：五层防御逐一关掉后复测，只有工具白名单这一层会重新出现攻破，说明它是这组攻击面的关键防线；其余四层在这批用例上没有额外贡献。</li>
+              <li><b>对照测试</b>：把伪造指令做成图片送进多模态模型，以及 base64、全角同形字、HTML 注释、CSV 公式等编码混淆载荷，均未出现绕过。</li>
+              <li><b>工程质量</b>：38 条单元测试与端到端回归全绿，GitHub Actions 在 Python 3.11 / 3.12 上自动跑。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <p class="codes">
+        <span class="ck">代码</span>
+        <a href="https://github.com/dijundev/agent-redteam" target="_blank" rel="noopener">GitHub · dijundev/agent-redteam ↗</a>
+        <a href="https://gitee.com/dijundev/agent-redteam" target="_blank" rel="noopener">Gitee 国内镜像 ↗</a>
+        <span class="note">用例集、判据与复现命令都在仓库里</span>
+      </p>
+
+      <div class="stack">
+        <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">LangGraph</span>
+        <span class="tag">Ollama / Qwen</span><span class="tag">SQLite</span><span class="tag">原生 JavaScript</span><span class="tag">pytest</span>
+      </div>
+    </article>
+
+    <!-- ============ 项目 04 ============ -->
+    <article class="proj" id="p4">
+      <div class="proj-head">
+        <div class="idx">04</div>
+        <div>
+          <div class="badges">
+            <span class="bd">个人项目</span>
             <span class="bd">2026.04 – 2026.07</span>
             <span class="bd">独立开发（后端 + 协议层 + 前端）</span>
             <span class="bd done">已跑通实测</span>
@@ -447,11 +630,11 @@ footer span{margin-left:auto}
             </div>
             <div class="br">
               <span class="bk">我负责的部分</span>
-              <p class="bt"><b>独立开发全栈</b>：物料协议、页面 DSL 与表达式 DSL 解析器、服务端只读 SQL 编译、权限下推、缓存与发布快照，以及前端编辑器，全部由我一个人完成。</p>
+              <p class="bt"><b>独立开发</b>：物料协议、页面 DSL 与表达式 DSL 解析器、服务端只读 SQL 编译、权限下推、缓存与发布快照，以及前端编辑器。</p>
             </div>
             <div class="br">
               <span class="bk">实际应用效果</span>
-              <p class="bt">用真实数据结构跑通端到端：受限用户只能看到其权限范围内的数据，无法用「总数 − 可见明细」反推隐藏部分。<b>平台目前是自用验证版本，尚未在真实团队规模化使用</b>。</p>
+              <p class="bt">用真实数据结构跑通端到端：受限用户只能看到其权限范围内的数据，无法用「总数 − 可见明细」反推隐藏部分；22 条注入与 AST 逃逸样本 100% 拦截、0 误杀。</p>
             </div>
           </div>
         </div>
@@ -489,150 +672,12 @@ footer span{margin-left:auto}
         <span class="ck">代码</span>
         <a href="https://github.com/dijundev/dsl-guard" target="_blank" rel="noopener">GitHub · dsl-guard ↗</a>
         <a href="https://gitee.com/dijundev/dsl-guard" target="_blank" rel="noopener">Gitee 国内镜像 ↗</a>
-        <span class="note">安全内核（表达式解析器 + SQL 守卫 + 值校验，103 个测试）已于 2026.11 剥离业务代码独立开源；平台本体含业务逻辑，未公开</span>
+        <span class="note">安全内核（表达式解析器 + SQL 守卫 + 值校验，103 个测试）已独立开源</span>
       </p>
 
       <div class="stack">
         <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">原生 JavaScript</span>
         <span class="tag">MySQL 8.0</span><span class="tag">Redis</span><span class="tag">sqlglot</span><span class="tag">pytest</span>
-      </div>
-    </article>
-
-    <!-- ============ 项目 03 ============ -->
-    <article class="proj" id="p3">
-      <div class="proj-head">
-        <div class="idx">03</div>
-        <div>
-          <div class="badges">
-            <span class="bd">个人项目</span>
-            <span class="bd">2026.10 – 至今</span>
-            <span class="bd">独立开发</span>
-            <span class="bd done">框架已跑通</span>
-            <span class="bd done">真模型已实测</span>
-          </div>
-          <h3>Agent 安全靶场：提示注入红队与防御评测</h3>
-          <div class="brief">
-            <div class="br">
-              <span class="bk">解决什么问题</span>
-              <p class="bt">Agent 一旦带上工具（读文件 / 查库 / 发消息 / 发请求），一段藏在文档里的提示注入就能把数据带出去。但团队没法回答「我们的 Agent 到底有多不安全」——缺一套可复现、可比较的量化口径。</p>
-            </div>
-            <div class="br">
-              <span class="bk">我负责的部分</span>
-              <p class="bt"><b>独立开发全链路</b>：60 条攻击用例设计（5 类攻击面）、带四个工具的目标 Agent、五层可开关防御、规则断言 + LLM 判据、评测流水线与看板。</p>
-            </div>
-            <div class="br">
-              <span class="bk">实际应用效果</span>
-              <p class="bt">60 条攻击用例 + 20 条正常任务，在真实大模型（<code>deepseek-v4.1-flash-1017</code>）上全量跑完 160 次：攻击成功率 <b>5% → 0%</b>，正常任务通过率 <b>100% → 95%</b>。真模型的失效点很集中——它扛得住提示注入，但会跟着文档里的伪造指令去<b>请求外部或内网地址</b>，这一层只有工程防御拦得住。后来又用 24 条自适应攻击把基线抬到 <b>28.3%</b>，防御全开仍然 <b>0 漏</b>，两组的 95% 置信区间不再重叠。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mrow">
-        <div class="mcell"><div class="v">60 + 20</div><div class="k">攻击用例 + 正常任务（5 类攻击面各 12 条）</div></div>
-        <div class="mcell"><div class="v">5% → 0%</div><div class="k">真模型 ASR：防御全关 → 全开</div></div>
-        <div class="mcell"><div class="v">19 / 20</div><div class="k">正常任务完成数（全开配置，无防御误伤）</div></div>
-        <div class="mcell"><div class="v">160</div><div class="k">真模型全量运行（22 分钟，逐条落库）</div></div>
-      </div>
-
-      <div class="mrow">
-        <div class="mcell"><div class="v">28.3% → 0%</div><div class="k">加固版 24 条自适应攻击，每格重复采样 2 轮</div></div>
-        <div class="mcell"><div class="v">13/46 → 0/48</div><div class="k">Wilson 区间不重叠，Fisher 双侧 p &lt; 0.001</div></div>
-        <div class="mcell"><div class="v">52.2% → 0%</div><div class="k">换 qwen3.8-27b 重跑同套用例，防御仍生效</div></div>
-        <div class="mcell"><div class="v">p = 0.0099</div><div class="k">② 工具白名单边际，补第 2 轮后达到显著</div></div>
-      </div>
-
-      <details>
-        <summary><span class="chev">▸</span>展开：为什么做这个 · 评测口径 · 与已有能力的衔接</summary>
-        <div class="detail">
-          <div class="arch">
-            <svg viewBox="0 0 860 190" role="img" aria-label="红队评测数据流">
-              <g font-family="-apple-system,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif">
-                <rect x="8" y="24" width="150" height="66" rx="10" fill="#ffffff" stroke="#e6e8ec"/>
-                <text x="83" y="50" font-size="12" font-weight="700" fill="#15181d" text-anchor="middle">攻击用例库</text>
-                <text x="83" y="70" font-size="11" fill="#646e7d" text-anchor="middle">60 条 · 5 类攻击面</text>
-
-                <path d="M158 57 H186" stroke="#c9d1da" stroke-width="1.5"/>
-
-                <rect x="186" y="24" width="150" height="66" rx="10" fill="#ffffff" stroke="#e6e8ec"/>
-                <text x="261" y="50" font-size="12" font-weight="700" fill="#15181d" text-anchor="middle">攻击 Agent</text>
-                <text x="261" y="70" font-size="11" fill="#646e7d" text-anchor="middle">模板 + LLM 变异</text>
-
-                <path d="M336 57 H364" stroke="#c9d1da" stroke-width="1.5"/>
-
-                <rect x="364" y="16" width="152" height="82" rx="10" fill="#fdf4e7" stroke="#f2d9b5"/>
-                <text x="440" y="40" font-size="12" font-weight="700" fill="#b45309" text-anchor="middle">防御层（可逐层开关）</text>
-                <text x="440" y="59" font-size="10.8" fill="#7a5a25" text-anchor="middle">指令隔离 · 工具白名单</text>
-                <text x="440" y="75" font-size="10.8" fill="#7a5a25" text-anchor="middle">权限闸门 · 输出过滤</text>
-                <text x="440" y="91" font-size="10.8" fill="#7a5a25" text-anchor="middle">轨迹监控</text>
-
-                <path d="M516 57 H544" stroke="#c9d1da" stroke-width="1.5"/>
-
-                <rect x="544" y="24" width="150" height="66" rx="10" fill="#ffffff" stroke="#e6e8ec"/>
-                <text x="619" y="50" font-size="12" font-weight="700" fill="#15181d" text-anchor="middle">目标 Agent</text>
-                <text x="619" y="70" font-size="11" fill="#646e7d" text-anchor="middle">读文件 / 查库 / 发消息 / HTTP</text>
-
-                <path d="M694 57 H722" stroke="#c9d1da" stroke-width="1.5"/>
-
-                <rect x="722" y="24" width="128" height="66" rx="10" fill="#f7fbfa" stroke="#cfe6e2"/>
-                <text x="786" y="50" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">判定与指标</text>
-                <text x="786" y="70" font-size="11" fill="#646e7d" text-anchor="middle">轨迹断言 + LLM 判据</text>
-
-                <rect x="186" y="120" width="664" height="52" rx="10" fill="#f4f6f8" stroke="#e6e8ec"/>
-                <text x="518" y="143" font-size="11.8" fill="#4a5563" text-anchor="middle">输出：ASR（攻击成功率）× 正常任务通过率 × 检测延迟 × 每千次成本，逐层防御的边际收益对比表</text>
-                <text x="518" y="161" font-size="10.8" fill="#9aa4b2" text-anchor="middle">固定 seed 与温度 0，同一用例集可完全复现</text>
-              </g>
-            </svg>
-          </div>
-          <div class="dblock">
-            <h5>为什么值得做</h5>
-            <p>大多数 Agent 作品的展示方式是「它能做什么」；招聘方更想确认的是「它搞不定的时候会怎样」。这个项目把不可见的风险变成可测量的数字，也延续了我前两个项目的同一条主线：<b>不可信输入不进执行路径</b>——在 SQL 上是 AST 白名单与权限下推，在 Agent 上是工具权限闸门与轨迹约束。</p>
-          </div>
-          <div class="dblock">
-            <h5>评测口径（避免自说自话）</h5>
-            <ul>
-              <li><b>命中判定</b>：规则优先——断言工具调用序列（是否调用了越权工具、参数是否含敏感路径、外发请求是否携带密钥）；规则覆盖不到的场景才交给 LLM 判据，判据先用 20 条人工标注样本校准一致性。</li>
-              <li><b>误杀控制</b>：同时跑一组不含攻击的正常任务，任何防御导致正常任务失败都计入误杀率，不做「只测攻击、不测正常」的乐观评测。</li>
-              <li><b>可复现</b>：固定 seed、温度 0、用例集入库；每次改动只允许动一个变量，跑同一套集对比。</li>
-            </ul>
-          </div>
-          <div class="dblock">
-            <h5>逐层边际（脚本模型基线：去掉某层后 ASR 上升多少）</h5>
-            <p>③ 参数校验 <b>+21.6 pp</b>、⑤ 出站过滤 <b>+8.3 pp</b>、①②④ 各 <b>+3.3 pp</b>。结论是「防御要分层，但真正拦得住的是参数校验」——把路径与 SQL 卡死，比在 prompt 里写一百句「不要听用户的」有用。这一栏最初由确定性模型跑 7 种配置测得（560 次运行）；后来又在真模型上用 24 条加固版攻击集把五层逐一消融了一遍，两组用例集不同、数字分表不混用。</p>
-          </div>
-          <div class="dblock">
-            <h5>真模型实测到的失效点</h5>
-            <p>60 条用例里真模型只被攻破 3 条，而且全部落在同一处：<b>工具调用层</b>。它能识别并拒绝直接的提示注入，但读到夹带伪造指令的文档后，会真的去调 <code>http_get</code> 请求 <code>cdn.shop.example</code>、<code>api.shop.example</code>、甚至 <code>127.0.0.1:8000/admin</code> 这类内网管理端口。防御全开后这三条都没能再打穿：T03 / T05 明确命中工具白名单，T08 由参数校验拦下或模型自行拒绝——<b>模型对齐管得住「说什么」，管不住「调什么」</b>，这是把安全判断放进防御层而不是塞进 prompt 的直接证据。</p>
-          </div>
-          <div class="dblock">
-            <h5>把基线抬起来，才能证明防御真的有用</h5>
-            <p>原来那 60 条用例太直白，模型自己就拒掉 57 条，防御全关的 ASR 只有 5%（3/60）——3 条样本算不出统计结论。所以另做了一组 <b>24 条自适应攻击</b>：把越权工具调用包装成运维 SOP、变更单、任务重述和等价编码（十进制 / 十六进制 IP、URL 编码、引号表名），每条<b>重复采样 2 轮</b>，再对五层防御逐一做消融。结果 <b>28.3%（13/46）→ 0%（0/48）</b>，两组 Wilson 95% 区间 [17.3%, 42.5%] 与 [0%, 7.4%] 不再重叠，<b>Fisher 精确检验双侧 p &lt; 0.001</b>（原来那组只有 p = 0.244），这时才能说「防御有效」而不是「看起来有效」。判据仍只认工具真的执行成功，不认模型嘴上答应；同一用例两轮结果不一致的也单独列出来。逐层消融里<b>只有 ② 工具白名单有边际（+13.6 pp，6/44 vs 0/48）</b>，①③④⑤ 去掉后仍是 0，和脚本模型那组「③ 参数校验是主力」正好相反。第一轮的 <code>3/23 vs 0/24</code> 只有 p = 0.109，所以我给 5 个消融配置各补了一轮（120 次调用），合并后 <b>p = 0.0099，达到显著</b>——这时才敢把「② 是这组攻击面的关键防线」写进结论。哪一层有用取决于攻击面，不是防御层的固有属性。逐条口径见仓库 <code>reports/adaptive.md</code>。</p>
-          </div>
-          <div class="dblock">
-            <h5>换模型、换载荷、换输入形态，结论稳不稳</h5>
-            <p>补跑三组对照。<b>换模型</b>：用 qwen3.8-27b 重跑同一套 24 条，防御全关 ASR 从 28.3% 升到 <b>52.2%（12/23）</b>，全开仍是 <b>0%（0/22）</b>，Fisher p &lt; 0.001，说明防御不是只对某一个模型有效。<b>换输入形态</b>：把伪造的运维指令做成图片送进多模态模型，8 次运行里模型都准确读出了图里的密钥路径与外发邮箱，但都拒绝执行、0 命中（样本仍小，只说明这条链路通了）。<b>换载荷</b>：base64、全角同形字、HTML 注释、CSV 公式、分段拼接、双重编码、零宽字符等 8 类编码混淆跑 32 次，基线本身就是 0/16，这组测不出防御贡献，如实记为负面结果。三组各有独立轨迹库与报告：<code>reports/adaptive-xmodel.md</code> / <code>reports/adaptive-mm.md</code> / <code>reports/adaptive-v2.md</code>。</p>
-          </div>
-          <div class="dblock">
-            <h5>当前进度与口径</h5>
-            <p>真模型全量已跑完：60 条攻击 + 20 条正常 × 2 种配置 = 160 次运行、22 分钟，逐条轨迹落库、报告由脚本生成不接受手填；38 条单测/端到端测试全绿（含 Wilson 区间、Fisher 检验、多模态消息构造的固定值回归），GitHub Actions 在 Python 3.11 / 3.12 上自动跑。</p>
-            <p>边界清单也在仓库里：消融补轮、跨模型对照、多模态通道、编码载荷实测都已做完，剩下的是
-              <b>20 条人工标注</b>才能启用的 LLM judge、以及本质上无法证明的「绝对安全」与长尾随机性，见 README 7.2 / 7.3 与
-              <code>reports/case-readiness.md</code> / <code>reports/judge-calibration.md</code>。</p>
-            <p class="evid">口径声明：真模型那一组用 <code>deepseek-v4.1-flash-1017</code> 实测——防御全关 ASR 5.0%（3/60），全开 0.0%（0/60）；正常任务 100% → 95%（19/20），唯一失败那条不是防御拦截造成的，而是模型该轮没产出回答，拦截计数为 0。另一组用确定性脚本模型跑完 7 种配置（ASR 100% → 1.7%，560 次运行约 4 秒），用于验证评测链路与逐层贡献，<b>不代表真实 LLM 的成功率</b>。两组分表、不混用。样本量 60 条、每格只采样一次，两组 ASR 的 95% 置信区间互相重叠，所以这里只做现象描述与失效点定位，不把 <code>5% → 0%</code> 当作效果显著性的断言；覆盖完整性与无效样本的逐条审计见仓库 <code>reports/audit-real.md</code>。</p>
-          </div>
-        </div>
-      </details>
-
-      <p class="codes">
-        <span class="ck">代码</span>
-        <a href="https://github.com/dijundev/agent-redteam" target="_blank" rel="noopener">GitHub · dijundev/agent-redteam ↗</a>
-        <a href="https://gitee.com/dijundev/agent-redteam" target="_blank" rel="noopener">Gitee 国内镜像 ↗</a>
-        <span class="note">60 条用例、判据与复现命令都在仓库里</span>
-      </p>
-
-      <div class="stack">
-        <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">LangGraph</span>
-        <span class="tag">Ollama / Qwen</span><span class="tag">SQLite</span><span class="tag">原生 JavaScript</span><span class="tag">pytest</span>
       </div>
     </article>
 
@@ -642,8 +687,8 @@ footer span{margin-left:auto}
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg>
       </div>
       <div>
-        <h4>附：AI coding 交付实验 —— 键锋打字练习站</h4>
-        <p>用 AI 辅助在 2 小时内从零交付并上线，之后又补了指法诊断、单指专项与节奏反馈。现有 8 种练习模式（含输入法中文）、时间 / 词数两种计时、虚拟键盘指法分区与错键热力图、结果复盘与错字重练。它证明的是「AI 辅助下的交付速度」，不作为 Agent 工程能力的证据，所以放在附录而不是项目区。</p>
+        <h4>附：AI 辅助交付 · 键锋打字练习站</h4>
+        <p>用 Codex / Cursor 辅助编码，2 小时内从零交付并上线，之后补了指法诊断、单指专项与节奏反馈。现有 8 种练习模式（含输入法中文）、时间 / 词数两种计时、虚拟键盘指法分区与错键热力图、结果复盘与错字重练。AI 产出逐条复核后提交。</p>
       </div>
       <div class="right">
         <a class="tag live" href="#" data-live="typing">打开站点 →</a>
@@ -656,7 +701,7 @@ footer span{margin-left:auto}
 <section class="band" id="creed">
   <div class="wrap">
     <div class="h2"><span class="num">03</span><h2>五条工程信条</h2></div>
-    <p class="sub">每条都对应一次踩过的坑，不是写给别人看的口号。</p>
+    <p class="sub">每条都来自一次真实问题的定位与修复。</p>
     <div class="creed">
       <div class="item"><div class="n">01</div><div>
         <b>模型只做理解与拼装，规则必须落在确定性代码里</b>
@@ -689,9 +734,9 @@ footer span{margin-left:auto}
     <p class="sub">时间线连续可核对：从数据侧到 Agent 工程，是同一条线往上走。</p>
     <div class="tl">
       <div class="row key">
-        <div class="when">2026.10 – 至今</div>
-        <div class="what">个人项目：Agent 安全靶场（提示注入红队与防御评测）</div>
-        <div class="desc">把「不可信输入不进执行路径」这条主线从 SQL 扩展到 Agent 的工具调用链。</div>
+        <div class="when">2026.10 – 2026.11</div>
+        <div class="what">个人项目：巡检机器人任务执行仿真平台 / Agent 安全评测靶场</div>
+        <div class="desc">前者把自然语言变成可校验、能恢复的动作序列；后者把「不可信输入不进执行路径」从 SQL 扩展到 Agent 的工具调用链。</div>
       </div>
       <div class="row">
         <div class="when">2026.04 – 2026.07</div>
@@ -699,9 +744,9 @@ footer span{margin-left:auto}
         <div class="desc">页面 DSL 与表达式 DSL 自研解析器，服务端编译成只读 SQL；与工作项目共用同一套语义层与权限模型。</div>
       </div>
       <div class="row">
-        <div class="when">2025.11 – 2026.07</div>
-        <div class="what">智能经营分析 Agent · 核心开发（5 人团队）</div>
-        <div class="desc">RAG 检索链路 / 指标语义层 / 缓存与分布式锁 / LangGraph 编排；交付上线后转线上稳定性保障与运维文档沉淀。</div>
+        <div class="when">2025.08 – 2026.10</div>
+        <div class="what">酷宝信息技术有限公司 · AI 应用开发工程师（5 人团队）</div>
+        <div class="desc">核心开发智能经营分析 Agent：RAG 检索链路 / 指标语义层 / 缓存与分布式锁 / LangGraph 编排；2026.07 交付上线后转线上稳定性保障与运维文档沉淀。</div>
       </div>
       <div class="row">
         <div class="when">2025.08 – 2025.10</div>
@@ -715,8 +760,8 @@ footer span{margin-left:auto}
       </div>
       <div class="row">
         <div class="when">2021.09 – 2025.06</div>
-        <div class="what">南昌理工学院 · 计算机科学与技术（统招本科）</div>
-        <div class="desc">主修：人工智能、数据挖掘、数据库、MySQL、Python。毕业设计：基于 Python 的小区物业管理系统的设计与实现。</div>
+        <div class="what">南昌理工学院 · 计算机科学与技术 · 全日制本科（学士）</div>
+        <div class="desc">主修：人工智能、数据挖掘、数据库、MySQL、Python。</div>
       </div>
     </div>
   </div>
@@ -724,24 +769,25 @@ footer span{margin-left:auto}
 
 <section class="contact">
   <div class="wrap">
-    <h2>聊聊 Agent 工程？</h2>
-    <p>深圳 · 随时到岗。工作项目代码归属公司，可面谈演示脱敏版本与实测报告；个人项目已开源，代码与复现命令都在仓库里。</p>
+    <h2>联系我</h2>
+    <p>深圳 / 广州 · 随时到岗。电话 19295745865 ｜ 邮箱 liudijunfo@foxmail.com。工作项目代码归属公司，可提供脱敏演示与实测报告；个人项目已开源，代码与复现命令都在仓库里。</p>
     <div class="links">
+      <a class="lk" href="tel:19295745865">电话 <b>19295745865</b></a>
       <a class="lk" href="mailto:liudijunfo@foxmail.com" data-copy="liudijunfo@foxmail.com">邮箱 <b>liudijunfo@foxmail.com</b></a>
       <a class="lk" href="#" data-live="github">GitHub 代码 <b>agent-redteam</b></a>
       <a class="lk" href="#" data-live="gitee">国内镜像 <b>Gitee</b></a>
       <a class="lk" href="#" data-live="dashboard">靶场看板 <b>在线评测结果</b></a>
-      <a class="lk" href="#projects">项目详情 <b>01 – 03</b></a>
-      <a class="lk" href="dijundev-portfolio.pdf" download>作品集 PDF <b>直接下载（9 页）</b></a>
-      <a class="lk" href="#" onclick="window.print();return false;">简历版 <b>打印 / 存 PDF</b></a>
+      <a class="lk" href="#projects">项目详情 <b>01 – 04</b></a>
+      <a class="lk" href="dijundev-portfolio.pdf" download>作品集 PDF <b>直接下载（10 页）</b></a>
+      <a class="lk" href="#" onclick="window.print();return false;">打印本页 <b>存 PDF</b></a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <span>刘迪君 · AI 应用开发 / Agent 工程 · 作品集</span>
-    <span>项目数字均取自实测记录，可复现、未做美化</span>
+    <span>刘迪君 · AI 应用开发 / AI Agent 工程 · 作品集</span>
+    <span>项目数字均取自实测记录</span>
   </div>
 </footer>
 
