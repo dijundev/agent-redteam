@@ -244,9 +244,7 @@ footer span{margin-left:auto}
       <small>AI 应用开发 / AI Agent 工程 · 把自然语言变成可校验、能恢复的执行链路</small>
     </h1>
     <p class="lead">
-      全日制本科（计算机科学与技术），2 年开发经验。前期做数据接入与 AI 应用开发，近一年主做
-      <strong>「自然语言 → 可校验动作序列」这一层</strong>：公司侧核心开发已上线的多智能体分析系统（5 人团队），
-      个人独立完成巡检机器人任务执行仿真平台与 Agent 安全评测靶场。
+      全日制本科（计算机科学与技术），2 年开发经验。做<strong>「自然语言指令 → 可校验动作序列 → 派发执行 → 异常恢复」这条链路的软件层</strong>：任务规划、调度与上位机通信、状态机、评测。公司侧核心开发已上线的企业级 Agent 系统（5 人团队），个人独立完成巡检机器人任务执行仿真平台与 Agent 安全评测靶场。
       系统已上线并在业务侧日常使用——问数一致率从 <b>35.6%</b> 提到 <b>98.1%</b>，
       日报制作从人工 2 小时压到 5 分钟内，50 并发 P95 从 26.6 s 降到 4.18 s，28 个越权用例 100% 拦截。
     </p>
@@ -268,7 +266,7 @@ footer span{margin-left:auto}
 <section class="band" id="cap">
   <div class="wrap">
     <div class="h2"><span class="num">01</span><h2>能力构成</h2></div>
-    <p class="sub">按工程落地的四块能力组织。</p>
+    <p class="sub">按工程落地的六块能力组织。</p>
     <div class="grid4">
       <div class="cap">
         <h4><i class="tick"></i>Agent 编排与任务规划</h4>
@@ -290,6 +288,16 @@ footer span{margin-left:auto}
         <p>sqlglot AST 七类白名单校验、权限条件下推最内层 WHERE（防推断式越权）、数字白名单防幻觉；638 条用例 + 并发压测 + LangFuse 可观测。</p>
         <div class="tags"><span class="tag">sqlglot</span><span class="tag">AST 白名单</span><span class="tag">篡改检测</span><span class="tag">pytest</span><span class="tag">LangFuse</span></div>
       </div>
+      <div class="cap">
+        <h4><i class="tick"></i>调度、上位机与通信</h4>
+        <p>FastAPI + WebSocket 下发任务、取消、人工接管与告警确认，控制权互斥；HTTP 接口契约（ToolRequest / ToolResponse）与入参在服务端二次校验；Python AsyncIO 处理事件流，每步进度落盘。</p>
+        <div class="tags"><span class="tag">FastAPI</span><span class="tag">WebSocket</span><span class="tag">AsyncIO</span><span class="tag">上位机</span></div>
+      </div>
+      <div class="cap">
+        <h4><i class="tick"></i>机器人仿真与工具链</h4>
+        <p>在 ROS 2 + MoveIt2 环境跑通 UR5 开源模型的仿真示例：配置 URDF、用 Python 节点调用接口下发目标位姿，观察规划与执行结果；巡检平台用 A* + 栅格代价膨胀做路径规划，二维栅格仿真，非真机。</p>
+        <div class="tags"><span class="tag">ROS 2</span><span class="tag">MoveIt2</span><span class="tag">A*</span><span class="tag">栅格规划</span><span class="tag">仿真</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -305,11 +313,11 @@ footer span{margin-left:auto}
         <div>
           <div class="badges">
             <span class="bd work">工作项目</span>
-            <span class="bd">2025.08 – 2026.10</span>
+            <span class="bd">2025.11 – 2026.07</span>
             <span class="bd">核心开发 · 5 人团队（后端 2 / 前端 1 / 业务 2）</span>
             <span class="bd done">已上线</span>
           </div>
-          <h3>智能经营分析 Agent（多智能体分析系统）</h3>
+          <h3>企业级智能经营分析 Agent</h3>
           <div class="brief">
             <div class="br">
               <span class="bk">解决什么问题</span>
@@ -448,7 +456,7 @@ footer span{margin-left:auto}
             </div>
             <div class="br">
               <span class="bk">我负责的部分</span>
-              <p class="bt"><b>独立开发</b>：任务规划与三道校验、按 ROS 2 Action 语义自行实现的动作层（goal / feedback / result / cancel 与终态机）、异常恢复、多传感器告警规则引擎，以及回归用例集。路径规划用 A* + 栅格代价膨胀；二维栅格仿真，非真机。</p>
+              <p class="bt"><b>独立开发</b>：任务规划与三道校验、按 ROS 2 Action 语义自行实现的动作层（goal / feedback / result / cancel 与终态机）、异常恢复、上位机通信、多传感器告警规则引擎，以及回归用例集。上位机用 FastAPI + WebSocket 下发任务、取消、人工接管与告警确认，控制权互斥；路径规划用 A* + 栅格代价膨胀，二维栅格仿真，非真机。</p>
             </div>
             <div class="br">
               <span class="bk">实际应用效果</span>
@@ -475,6 +483,10 @@ footer span{margin-left:auto}
           <div class="dblock">
             <h5>Action 执行层与异常恢复</h5>
             <p>按 ROS 2 Action 语义实现目标派发、进度反馈、结果回收与取消，配终态机；串行目标队列 + 单写锁保证单目标执行，每步进度落盘，中断后从断点续跑。电量低于 25% 中止当前目标、回充至 80% 后重排剩余步骤；导航超时、卡死、人工接管三态分别收敛并留痕。</p>
+          </div>
+          <div class="dblock">
+            <h5>调度与上位机</h5>
+            <p>FastAPI + WebSocket 下发任务、取消、人工接管与告警确认，控制权互斥；HTTP 接口统一 ToolRequest / ToolResponse 契约，入参在服务端二次校验；Python AsyncIO 处理事件流，每步进度落盘，中断后从断点续跑。</p>
           </div>
           <div class="dblock">
             <h5>感知与告警</h5>
@@ -773,7 +785,7 @@ footer span{margin-left:auto}
       <a class="lk" href="#" data-live="gitee">国内镜像 <b>Gitee</b></a>
       <a class="lk" href="#" data-live="dashboard">靶场看板 <b>在线评测结果</b></a>
       <a class="lk" href="#projects">项目详情 <b>01 – 04</b></a>
-      <a class="lk" href="dijundev-portfolio.pdf" download>作品集 PDF <b>直接下载（9 页）</b></a>
+      <a class="lk" href="dijundev-portfolio.pdf" download>作品集 PDF <b>直接下载（10 页）</b></a>
       <a class="lk" href="#" onclick="window.print();return false;">打印本页 <b>存 PDF</b></a>
     </div>
   </div>
