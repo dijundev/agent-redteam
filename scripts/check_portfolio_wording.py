@@ -51,8 +51,13 @@ GROUPS = {
         "一句话说清技术选型", "已跑通实测", "真模型实测完成",
     ],
     "红线：不许声称做过的机器人本体能力": [
-        "rclpy", "Nav2", "MoveIt", "Gazebo", "SLAM", "运动学", "PID 控制",
+        "rclpy", "Nav2", "Gazebo", "SLAM", "运动学", "PID 控制",
         "CAN 总线", "真机 ROS", "Sim2Real",
+        # 11-11 简历允许「跑通 / 配置 / 调用接口」，只禁把动词升级成开发 / 优化 / 调参
+        "MoveIt 开发", "MoveIt2 开发", "MoveIt 优化", "MoveIt 调参",
+        "MoveIt 算法", "真机 MoveIt",
+        # 资料口径：多模态是「用提示词在用」，不是训模型
+        "视觉模型训练", "点云处理", "视觉伺服",
     ],
 }
 
@@ -61,6 +66,8 @@ REQUIRED = [
     "2 年开发经验", "2024.06", "全日制本科", "计算机科学与技术",
     "5 人团队", "核心开发", "巡检机器人", "仿真", "深圳", "19295745865",
     "liudijunfo@foxmail.com",
+    # 11-11 合并版简历同步过来的能力关键词
+    "上位机", "调度", "ROS 2",
 ]
 
 
@@ -98,6 +105,15 @@ def main() -> None:
 
     missing = [w for w in REQUIRED if w not in text]
 
+    # 11-11 尺子：提到 MoveIt 只能说「跑通 / 配置 / 调用接口」，且必须带仿真划界
+    boundary_errors = []
+    if "MoveIt" in text and not (
+        "跑通" in text and ("仿真示例" in text or "非真机" in text)
+    ):
+        boundary_errors.append(
+            "提到 MoveIt 必须同时写「跑通」与「仿真示例 / 非真机」，不许升级成开发或真机"
+        )
+
     # 结构：4 个项目卡、div 配平
     articles = len(re.findall(r"<article class=\"proj\"", html))
     div_open = html.count("<div")
@@ -116,7 +132,11 @@ def main() -> None:
             print("  -", w)
     if not structure_ok:
         print("\n❌ 结构异常：项目卡应为 4 个、div 需配平")
-    if not hits and not missing and structure_ok:
+    if boundary_errors:
+        print("\n❌ 机器人本体口径划界不全：")
+        for e in boundary_errors:
+            print("  -", e)
+    if not hits and not missing and structure_ok and not boundary_errors:
         print("\n✅ 通过：禁词 0 命中，事实口径齐全，结构完整")
         return
     sys.exit(1)
