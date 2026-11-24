@@ -205,6 +205,8 @@ footer span{margin-left:auto}
   .tl .row{padding-bottom:12px}
   /* 经历只占半页，标题别单独留在上一页末尾 */
   #tl .wrap{break-inside:avoid}
+  /* 纸面上链接点不了，把在线地址印出来 */
+  .codes a.live::after{content:"　dijundev.localhost.cc/replay.html";font-size:8.5pt;color:#5c6577}
   /* 第五张卡很短，拆开会出现「标题在上页、指标在下页」，整块不拆 */
   #p5{break-inside:avoid}
   .proj-head,.brief,.brief .br,.mrow,.mcell,.dblock,.fault,.codes,.stack,.arch,.mini{break-inside:avoid}
@@ -506,8 +508,14 @@ footer span{margin-left:auto}
       </details>
 
       <p class="codes">
+        <span class="ck">在线</span>
+        <a class="live" href="https://dijundev.localhost.cc/replay.html" target="_blank" rel="noopener">▶ 执行回放（一次完整巡检的逐 tick 轨迹）↗</a>
+        <span class="note">不用登录、不用装环境，打开就能看</span>
+      </p>
+      <p class="codes">
         <span class="ck">代码</span>
         <a href="https://github.com/dijundev/robot-sim-agent" target="_blank" rel="noopener">GitHub · robot-sim-agent ↗</a>
+        <span class="note">52 个单测 · GitHub Actions 跑 3 个 Python 版本</span>
       </p>
 
       <div class="stack">
