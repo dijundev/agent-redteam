@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>刘迪君 · AI Agent 应用开发 · 作品集</title>
-<meta name="description" content="刘迪君的作品集：AI Agent 应用开发。多智能体分析系统（问数一致率 98.1%）、巡检机器人任务执行仿真平台、Agent 安全评测靶场、自助式低代码看板平台。">
+<meta name="description" content="刘迪君的作品集：AI Agent 应用开发。企业级智能经营分析 Agent（问数一致率 98.1%）、巡检机器人任务执行仿真平台、Agent 安全评测靶场、自助式低代码看板平台、图片 / PDF 多模态提取。">
 <meta property="og:title" content="刘迪君 · AI Agent 应用开发">
 <meta property="og:description" content="把自然语言变成可校验、能恢复的执行链路：任务规划、工具契约、状态机与评测。">
 <meta name="color-scheme" content="light">
@@ -196,11 +196,19 @@ footer span{margin-left:auto}
 @media print{
   .nav,.cta,.print{display:none!important}
   body{background:#fff;font-size:10.5pt}
-  .hero .wrap,section.band .wrap,.contact .wrap,footer .wrap{padding:14px 0}
+  .hero .wrap,section.band .wrap,.contact .wrap,footer .wrap{padding:12px 0}
   /* 项目卡很长，整块 avoid 会把上一页留出大片空白；改为按内部小节 avoid */
-  .proj{break-inside:auto;border-color:#d8dde5;box-shadow:none}
-  .proj-head,.brief,.brief .br,.mrow,.mcell,.dblock,.fault,.codes,.stack,.arch{break-inside:avoid}
-  .kv{break-inside:auto}
+  .proj{break-inside:auto;border-color:#d8dde5;box-shadow:none;padding:16px 18px;margin-bottom:11px}
+  .brief{margin-top:11px;padding-top:10px;gap:7px}
+  .proj details{margin-top:11px;padding-top:10px}
+  .creed .item{padding:11px 15px}
+  .tl .row{padding-bottom:12px}
+  /* 经历只占半页，标题别单独留在上一页末尾 */
+  #tl .wrap{break-inside:avoid}
+  /* 第五张卡很短，拆开会出现「标题在上页、指标在下页」，整块不拆 */
+  #p5{break-inside:avoid}
+  .proj-head,.brief,.brief .br,.mrow,.mcell,.dblock,.fault,.codes,.stack,.arch,.mini{break-inside:avoid}
+  .kv{break-inside:auto;grid-template-columns:118px 1fr}
   .kv dt{break-after:avoid}
   .proj h3,.dblock h5,.h2{break-after:avoid}
   .detail{display:block!important}
@@ -244,14 +252,14 @@ footer span{margin-left:auto}
       <small>AI 应用开发 / AI Agent 工程 · 把自然语言变成可校验、能恢复的执行链路</small>
     </h1>
     <p class="lead">
-      全日制本科（计算机科学与技术），2 年开发经验。做<strong>「自然语言指令 → 可校验动作序列 → 派发执行 → 异常恢复」这条链路的软件层</strong>：任务规划、调度与上位机通信、状态机、评测。公司侧核心开发已上线的企业级 Agent 系统（5 人团队），个人独立完成巡检机器人任务执行仿真平台与 Agent 安全评测靶场。
+      全日制本科（计算机科学与技术），2 年开发经验。做<strong>「自然语言指令 → 可校验动作序列 → 派发执行 → 异常恢复」这条链路的软件层</strong>：任务拆解、工具契约、状态机、评测。上一份工作在企业级 Agent 系统里做后端开发（5 人团队），负责取数正确性与安全这一摊；个人独立完成巡检机器人任务执行仿真平台、Agent 安全评测靶场与多模态提取 demo。
       系统已上线并在业务侧日常使用——问数一致率从 <b>35.6%</b> 提到 <b>98.1%</b>，
-      日报制作从人工 2 小时压到 5 分钟内，50 并发 P95 从 26.6 s 降到 4.18 s，28 个越权用例 100% 拦截。
+      日报制作从人工 2 小时压到 5 分钟内，归因 Top3 命中率 50% 提到 80%，28 个越权用例 100% 拦截。
     </p>
     <div class="kpis">
       <div class="kpi"><div class="v">98.1<em>%</em></div><div class="k">问数一致率（原 35.6%，312 条黄金用例）</div></div>
       <div class="kpi"><div class="v">65<em>ms</em></div><div class="k">单次问数 SQL 执行（原 741 ms）</div></div>
-      <div class="kpi"><div class="v">4.18<em>s</em></div><div class="k">50 并发读路径 P95（原 26.6 s）</div></div>
+      <div class="kpi"><div class="v">80<em>%</em></div><div class="k">异动归因 Top3 命中（原 50%，30 个真值事件）</div></div>
       <div class="kpi"><div class="v">100<em>%</em></div><div class="k">28 个越权用例拦截率</div></div>
     </div>
     <div class="cta">
@@ -270,7 +278,7 @@ footer span{margin-left:auto}
     <div class="grid4">
       <div class="cap">
         <h4><i class="tick"></i>Agent 编排与任务规划</h4>
-        <p>用代码控制流替代自由 Agent 循环：状态机固定主链路，只在必需处留条件边；会话状态持久化、进度落盘、失败可重放。工具调用、多智能体拆分、MCP 接入；动作层按 ROS 2 Action 语义实现 goal / feedback / result / cancel 与终态机。</p>
+        <p>用代码控制流替代自由 Agent 循环：状态机固定主链路，只在必需处留条件边；会话状态持久化、进度落盘、失败可重放。工具调用、多智能体拆分、MCP 接入；动作层按 ROS 2 Action 语义实现 goal / feedback / result / cancel 与终态机。探索式场景里模型只提「下一步切哪个维度」，取数、判异常、是否继续全在代码里。</p>
         <div class="tags"><span class="tag">LangGraph</span><span class="tag">StateGraph</span><span class="tag">Checkpointer</span><span class="tag">任务规划</span><span class="tag">MCP</span></div>
       </div>
       <div class="cap">
@@ -280,13 +288,13 @@ footer span{margin-left:auto}
       </div>
       <div class="cap">
         <h4><i class="tick"></i>工程底座</h4>
-        <p>Python AsyncIO 与分层架构、FastAPI / Pydantic / SQLAlchemy；MySQL 8.0 分区裁剪；Redis 缓存键含权限指纹、single-flight 请求合并、分布式锁。</p>
+        <p>Python AsyncIO 与分层架构、FastAPI / Pydantic / SQLAlchemy；MySQL 8.0 分区裁剪；Redis 结果缓存与请求合并、分布式锁（SET NX PX + Lua 校验持有者），缓存键按权限范围区分。</p>
         <div class="tags"><span class="tag">FastAPI</span><span class="tag">MySQL 8.0</span><span class="tag">Redis</span><span class="tag">Docker</span><span class="tag">Linux</span></div>
       </div>
       <div class="cap">
         <h4><i class="tick"></i>安全与质量</h4>
-        <p>sqlglot AST 七类白名单校验、权限条件下推最内层 WHERE（防推断式越权）、数字白名单防幻觉；638 条用例 + 并发压测 + LangFuse 可观测。</p>
-        <div class="tags"><span class="tag">sqlglot</span><span class="tag">AST 白名单</span><span class="tag">篡改检测</span><span class="tag">pytest</span><span class="tag">LangFuse</span></div>
+        <p>sqlglot AST 七类白名单校验、权限条件下推最内层 WHERE（防推断式越权）、数字白名单防幻觉；638 条 pytest 用例、黄金用例跑评与发布门禁、LangFuse 可观测。</p>
+        <div class="tags"><span class="tag">sqlglot</span><span class="tag">AST 白名单</span><span class="tag">篡改检测</span><span class="tag">pytest</span><span class="tag">发布门禁</span><span class="tag">LangFuse</span></div>
       </div>
       <div class="cap">
         <h4><i class="tick"></i>调度、上位机与通信</h4>
@@ -314,7 +322,7 @@ footer span{margin-left:auto}
           <div class="badges">
             <span class="bd work">工作项目</span>
             <span class="bd">2025.11 – 2026.07</span>
-            <span class="bd">核心开发 · 5 人团队（后端 2 / 前端 1 / 业务 2）</span>
+            <span class="bd">后端开发 · 5 人团队（后端 2 / 前端 1 / 业务 2）</span>
             <span class="bd done">已上线</span>
           </div>
           <h3>企业级智能经营分析 Agent</h3>
@@ -325,7 +333,7 @@ footer span{margin-left:auto}
             </div>
             <div class="br">
               <span class="bk">我负责的部分</span>
-              <p class="bt">核心开发，5 人团队里后端 2 人之一。<b>负责四块</b>：RAG 检索链路、指标语义层、缓存与并发控制、LangGraph 编排；并落地 AST 白名单与权限下推的安全校验。</p>
+              <p class="bt">后端开发，5 人团队里后端 2 人之一。负责<b>「取出来的数对不对」</b>这一摊：指标语义层、结构化检索链路、主链路里交给模型的那几步与条件边、SQL 校验与权限下推、黄金用例评测与发布门禁，以及后来的假设驱动探索式归因。</p>
             </div>
             <div class="br">
               <span class="bk">实际应用效果</span>
@@ -343,7 +351,7 @@ footer span{margin-left:auto}
       </div>
 
       <details>
-        <summary><span class="chev">▸</span>展开：架构 · 负责的四块 · 三次线上问题</summary>
+        <summary><span class="chev">▸</span>展开：架构 · 负责的几块 · 三次线上问题</summary>
         <div class="detail">
           <div class="arch">
             <svg viewBox="0 0 860 268" role="img" aria-label="三层架构：编排层、语义层、安全层">
@@ -394,12 +402,13 @@ footer span{margin-left:auto}
           </div>
 
           <div class="dblock">
-            <h5>负责的四块</h5>
+            <h5>负责的几块</h5>
             <ul>
               <li><b>RAG 检索链路</b>：以字段元数据、Few-shot 用例、指标别名三类向量集合（67 / 104 / 74 条）为检索源，最小检索单元是「一个字段 / 一条用例 / 一个别名」；用 <b>Join 图 BFS 最小边集</b>补全多表拓扑，用<b>粒度对齐</b>防止一对多 JOIN 把金额放大；以 score_threshold + payload 过滤 + 业务优先级剪枝替代两阶段 rerank，省掉一次模型调用。</li>
               <li><b>指标语义层</b>：12 个核心指标的口径（公式 / 过滤条件 / 时间归属 / 可用维度 / 权限标签）配置化落库，由统一取数规划器翻译成只读 SQL——口径变更不发版，代码侧零硬编码公式。</li>
-              <li><b>缓存与并发</b>：缓存键强制包含<b>权限范围哈希</b>（否则 A 用户的结果会被 B 用户命中，这是最典型的数据泄露路径）；single-flight 请求合并削峰；分布式锁 SET NX PX 原子获取 + Lua 校验持有者删除 + 长任务按锁时长 1/3 续期；「锁 + 幂等表」双层保证日报推送幂等。</li>
-              <li><b>多智能体编排</b>：LangGraph StateGraph 把 15 节点主链路固化为代码控制流（仅 5 处条件边），取代自由 Agent 循环；会话状态经 Checkpointer 持久化。</li>
+              <li><b>主链路编排与模型节点</b>：LangGraph StateGraph 把 15 节点主链路固化为代码控制流（仅 5 处条件边），路由函数全是纯函数、可单测可回放；定清哪几步交给模型、哪几步必须是代码，会话状态经 Checkpointer 持久化。</li>
+              <li><b>SQL 校验、权限下推与门禁</b>：sqlglot AST 七类校验 + 权限条件按承载表逐维注入、列名用该层别名限定；28 个越权用例直接断言权限改写函数的产出；312 条黄金用例跑评低于基线自动阻断发布。</li>
+              <li><b>假设驱动的探索式归因</b>：模型只读盘面与上一刀观测、输出「下一刀切哪个维度」，取数、判异常、是否继续全在代码里；白名单外的维度与重复提议直接拒绝并降级为规则顺序，上限三刀、每刀写审计、可回放。与确定性四维全扫并存——出报告走确定性，快速定位与开放式提问走探索式。</li>
             </ul>
           </div>
 
@@ -414,8 +423,8 @@ footer span{margin-left:auto}
               <p>根因是校验脚本自己拼了一遍权限条件再比数字——测试复述了设计意图，没有断言执行路径。重写为 28 个越权用例直接检查权限改写函数的产出，第一次运行就抓出 4 个缺陷，最终 100% 拦截。</p>
             </div>
             <div class="fault">
-              <b>并发压测成功率 0%：async def 里跑同步 I/O</b>
-              <p>声明为 async 的函数内部执行同步阻塞调用，事件循环被拖死——「看起来并发的代码」实际完全不并发。重建并发链路后 P95 从 26.6 s 降到 4.18 s，压测另外抓出 3 个并发缺陷。</p>
+              <b>时间口径一次错 44 条：「2 月第二周」被当成整月</b>
+              <p>104 条时间解析用例只有 60 条对（57.7%），错的 44 条里 40 条都是同一类——「N 月第 K 周」这种相对周表达被解析成了整月区间，数字不报错、只是范围悄悄变大。把相对周表达单独收进口径配置、按数据窗口起点推算自然周边界，修完 104 条全对。这类错误只有拿标准答案逐值比对才暴露。</p>
             </div>
           </div>
 
@@ -425,6 +434,7 @@ footer span{margin-left:auto}
               <dt>为什么不用自由 Agent</dt><dd>业务链路固定，自由循环换来的是不可复现的失败；固化成状态机后每一次失败都能重放到具体节点。</dd>
               <dt>为什么不让模型写 SQL</dt><dd>模型负责「理解问题 + 拼装结构」，SQL 由语义层编译；模型输出永远不直接进执行路径。</dd>
               <dt>为什么不做 rerank</dt><dd>结构化检索的候选集很小且带业务标签，阈值 + payload 过滤已足够，省一次模型调用的延迟与成本。</dd>
+              <dt>为什么分两条路</dt><dd>出报告的数字要满足「贡献之和等于大盘偏离」，只能四维全扫、基准做趋势校正；让模型跳着切，这个前提就没了。要快定位和答开放式问题，另开一条探索式链路，两条并存、数字不混用。</dd>
             </dl>
           </div>
         </div>
@@ -689,6 +699,47 @@ footer span{margin-left:auto}
       </div>
     </article>
 
+    <!-- ============ 项目 05 ============ -->
+    <article class="proj" id="p5">
+      <div class="proj-head">
+        <div class="idx">05</div>
+        <div>
+          <div class="badges">
+            <span class="bd">个人项目</span>
+            <span class="bd">2026.11</span>
+            <span class="bd">独立开发</span>
+            <span class="bd done">开源</span>
+          </div>
+          <h3>图片 / PDF → 结构化 JSON 的多模态提取</h3>
+          <div class="brief">
+            <div class="br">
+              <span class="bk">解决什么问题</span>
+              <p class="bt">发票照片、扫描合同要转成表格，人工敲太慢。真正的难点不是「把字读出来」，而是<b>判断「读得对不对」</b>——模型不会报错，错的金额看着和真的一样。</p>
+            </div>
+            <div class="br">
+              <span class="bk">我负责的部分</span>
+              <p class="bt"><b>独立开发</b>：PDF 按页渲染成图与图片压缩、提示词模板、按内容哈希分页缓存、JSON 剥壳、结果自检规则、表格导 Excel，以及 23 条不联网单测与 CI。</p>
+            </div>
+            <div class="br">
+              <span class="bk">实际应用效果</span>
+              <p class="bt">三个样例（发票 / 拍歪的表格照片 / 两页 PDF）4 页 7180 token、6 秒跑完，成本不到一分钱；同一份文件再跑 0.5 秒 0 token。自检脚本只拿文档本身该成立的算术关系去查（列数 / 单价 / 合计 / 日期），故意把一行金额改错，一次报出三个 FAIL 并以退出码 1 结束，可以直接当闸门挂在批处理里。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="codes">
+        <span class="ck">代码</span>
+        <a href="https://github.com/dijundev/multimodal-extract-demo" target="_blank" rel="noopener">GitHub · multimodal-extract-demo ↗</a>
+        <span class="note">CI 跑 3.10 / 3.12，不调模型、不烧 token</span>
+      </p>
+
+      <div class="stack">
+        <span class="tag">Python</span><span class="tag">Pillow</span><span class="tag">PyMuPDF</span>
+        <span class="tag">openpyxl</span><span class="tag">pytest</span>
+      </div>
+    </article>
+
     <!-- AI coding 小条 -->
     <div class="mini">
       <div class="ico">
@@ -725,12 +776,14 @@ footer span{margin-left:auto}
         <p>JOIN 放大不报错、量级看着合理，只让排名悄悄错掉。修法是造数断言「明细之和 == 订单实付」；低代码平台里同样先用预聚合对齐粒度再 LEFT JOIN。</p>
       </div></div>
       <div class="item"><div class="n">04</div><div>
-        <b>并发能力靠压测检验</b>
-        <p>async def 里跑同步 I/O，压测成功率 0%、P95 26.6 s——「看起来并发」和「实际并发」之间没有中间地带。重建链路后 P95 4.18 s，压测还顺手抓出 3 个并发缺陷。</p>
+        <b>模型提假设，代码做判定</b>
+        <p>归因里让模型决定「下一刀切哪个维度」，但取数、判异常、要不要继续全在代码里，白名单外的提议直接拒绝。模型的价值是缩小搜索空间，不是替系统下结论。</p>
+        <p class="evid">落地：探索式归因上限三刀、每刀写审计，30 个真值回放定位 18 个；点名的维度 1 刀命中。</p>
       </div></div>
       <div class="item"><div class="n">05</div><div>
-        <b>降级优先于失败</b>
-        <p>除配置与元数据库外，任何依赖不可用都不阻止启动：Redis 挂了退本地、Qdrant 不可用退全表元数据、ES 不可用只写库。可用性先于完整性。</p>
+        <b>数字能加回来，才算结论</b>
+        <p>各维度贡献加起来必须等于大盘偏离，残差不为零这条结论就不能拿去汇报。所以出报告走固定的四维全扫 + LMDI，而不是让模型自由发挥；探索式那条只用来快速定位和回答开放式提问，不进报告。</p>
+        <p class="evid">落地：30 个异动事件残差 0、Top3 命中 80%；探索式三刀内定位 60%、平均 2.6 刀。</p>
       </div></div>
     </div>
   </div>
@@ -742,8 +795,8 @@ footer span{margin-left:auto}
     <div class="tl">
       <div class="row key">
         <div class="when">2026.10 – 2026.11</div>
-        <div class="what">个人项目：巡检机器人任务执行仿真平台 / Agent 安全评测靶场</div>
-        <div class="desc">前者把自然语言变成可校验、能恢复的动作序列；后者把「不可信输入不进执行路径」从 SQL 扩展到 Agent 的工具调用链。</div>
+        <div class="what">个人项目：巡检机器人任务执行仿真平台 / Agent 安全评测靶场 / 多模态提取</div>
+        <div class="desc">前者把自然语言变成可校验、能恢复的动作序列；中间那个把「不可信输入不进执行路径」从 SQL 扩展到 Agent 的工具调用链；后者解决「模型说得通但读错了」怎么查出来。</div>
       </div>
       <div class="row">
         <div class="when">2026.04 – 2026.07</div>
@@ -753,12 +806,12 @@ footer span{margin-left:auto}
       <div class="row">
         <div class="when">2025.08 – 2026.10</div>
         <div class="what">酷宝信息技术有限公司 · AI 应用开发工程师（5 人团队）</div>
-        <div class="desc">核心开发智能经营分析 Agent：RAG 检索链路 / 指标语义层 / 缓存与分布式锁 / LangGraph 编排；2026.07 交付上线后转线上稳定性保障与运维文档沉淀。</div>
+        <div class="desc">后端开发企业级智能经营分析 Agent：指标语义层 / 检索链路 / 主链路编排与模型节点 / SQL 校验与权限 / 评测门禁 / 探索式归因；2026.07 交付上线后转线上稳定性保障与运维文档沉淀。</div>
       </div>
       <div class="row">
         <div class="when">2025.08 – 2025.10</div>
         <div class="what">多源异构数据抓取与增量更新框架</div>
-        <div class="desc">统一多来源字段口径、沉淀可复用中间表、维护定时任务集群与运行监控。</div>
+        <div class="desc">统一多来源字段口径、沉淀可复用中间表，搭起定时任务集群与运行监控。</div>
       </div>
       <div class="row">
         <div class="when">2024.06 – 2025.05</div>
@@ -784,7 +837,7 @@ footer span{margin-left:auto}
       <a class="lk" href="#" data-live="github">GitHub 代码 <b>agent-redteam</b></a>
       <a class="lk" href="#" data-live="gitee">国内镜像 <b>Gitee</b></a>
       <a class="lk" href="#" data-live="dashboard">靶场看板 <b>在线评测结果</b></a>
-      <a class="lk" href="#projects">项目详情 <b>01 – 04</b></a>
+      <a class="lk" href="#projects">项目详情 <b>01 – 05</b></a>
       <a class="lk" href="dijundev-portfolio.pdf" download>作品集 PDF <b>直接下载（10 页）</b></a>
       <a class="lk" href="#" onclick="window.print();return false;">打印本页 <b>存 PDF</b></a>
     </div>
@@ -794,7 +847,7 @@ footer span{margin-left:auto}
 <footer>
   <div class="wrap">
     <span>刘迪君 · AI 应用开发 / AI Agent 工程 · 作品集</span>
-    <span>更新于 2026.11</span>
+    <span>更新于 2026.11.24</span>
   </div>
 </footer>
 
